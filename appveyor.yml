@@ -31,7 +31,7 @@ build_script:
   - cmd: mvn -DskipTests -Phadoop-2.6 -Phive -Phive-thriftserver package
 
 test_script:
-  - cmd: mvn -Phadoop-2.6 -Phive -Phive-thriftserver --fail-at-end test
+  - cmd: mvn -Phadoop-2.6 -Phive -Phive-thriftserver --fail-never test
 
 notifications:
   - provider: Email
