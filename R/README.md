@@ -1,4 +1,4 @@
-# R on Spark
+# Change in R
 
 SparkR is an R package that provides a light-weight frontend to use Spark from R.
 
