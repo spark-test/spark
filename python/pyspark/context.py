@@ -830,15 +830,6 @@ class SparkContext(object):
         """
         self._jsc.sc().addJar(path, addToCurrentClassLoader)
 
-    def _loadClass(self, className):
-        """
-        .. note:: Experimental
-
-        Loads a JVM class using the MutableClass loader used by spark.
-        This function exists because Py4J uses a different class loader.
-        """
-        self._jvm.org.apache.spark.util.Utils.getContextOrSparkClassLoader().loadClass(className)
-
     def setCheckpointDir(self, dirName):
         """
         Set the directory under which RDDs are going to be checkpointed. The

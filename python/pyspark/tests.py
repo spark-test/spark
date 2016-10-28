@@ -35,6 +35,7 @@ import threading
 import hashlib
 
 from py4j.protocol import Py4JJavaError
+from py4j.java_gateway import JavaClass
 try:
     import xmlrunner
 except ImportError:
@@ -417,15 +418,15 @@ class AddFileTests(PySparkTestCase):
             self.assertEqual("Hello World!\n", test_file.readline())
 
     def test_add_jar(self):
+        jvm = self.sc._jvm
         # We shouldn't be able to load anything from the package before it is added
-        self.assertRaises(Exception,
-                          lambda: sc._loadClass("sparkR.test.hello"))
+        self.assertFalse(isinstance(jvm.sparkR.test.hello, JavaClass))
         # Load the new jar
         path = os.path.join(SPARK_HOME, "./R/pkg/inst/test_support/sparktestjar_2.10-1.0.jar")
         self.sc.addJar(path, True)
         self.assertTrue(self.sc._jsc.sc().addedJars().toString().find("sparktestjar") != -1)
         # Try and load a different one of the classes
-        cls = self.sc._loadClass("sparkR.test.basicFunction")
+        self.assertTrue(isinstance(jvm.sparkR.test.basicFunction, JavaClass))
 
     def test_add_file_recursively_locally(self):
         path = os.path.join(SPARK_HOME, "python/test_support/hello")
@@ -436,7 +437,6 @@ class AddFileTests(PySparkTestCase):
             self.assertEqual("Hello World!\n", test_file.readline())
         with open(download_path + "/sub_hello/sub_hello.txt") as test_file:
             self.assertEqual("Sub Hello World!\n", test_file.readline())
-
 
     def test_add_py_file_locally(self):
         # To ensure that we're actually testing addPyFile's effects, check that
