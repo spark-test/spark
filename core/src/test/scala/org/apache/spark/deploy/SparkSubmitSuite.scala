@@ -22,10 +22,12 @@ import java.net.URL
 import java.nio.charset.StandardCharsets
 
 import scala.collection.mutable.ArrayBuffer
+
 import com.google.common.io.ByteStreams
 import org.scalatest.{BeforeAndAfterEach, Matchers}
 import org.scalatest.concurrent.Timeouts
 import org.scalatest.time.SpanSugar._
+
 import org.apache.spark._
 import org.apache.spark.api.r.RUtils
 import org.apache.spark.deploy.SparkSubmit._

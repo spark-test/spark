@@ -18,7 +18,7 @@
 package org.apache.spark
 
 import java.io.File
-import java.net.MalformedURLException
+import java.net.{MalformedURLException, URL}
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.TimeUnit
 
@@ -33,7 +33,7 @@ import org.scalatest.concurrent.Eventually
 import org.scalatest.Matchers._
 
 import org.apache.spark.scheduler.{SparkListener, SparkListenerJobStart, SparkListenerTaskStart}
-import org.apache.spark.util.Utils
+import org.apache.spark.util.{MutableURLClassLoader, Utils}
 
 
 class SparkContextSuite extends SparkFunSuite with LocalSparkContext with Eventually {
@@ -321,10 +321,21 @@ class SparkContextSuite extends SparkFunSuite with LocalSparkContext with Eventu
     val className = "DummyClass"
     val jarPath = TestUtils.createDummyJar(tempDir, packageName, className)
 
-    test(s"jar can be added and used driver side in $schedulingMode") {
-      sc = new SparkContext(master, "test")
-      sc.addJar(jarPath, addToCurrentClassLoader = true)
-      Utils.getContextOrSparkClassLoader.loadClass(s"$packageName.$className")
+    // ensure we reset the classloader after the test completes
+    val originalClassLoader = Thread.currentThread.getContextClassLoader
+    try {
+      // load the exception from the jar
+      val loader = new MutableURLClassLoader(new Array[URL](0), originalClassLoader)
+
+      test(s"jar can be added and used driver side in $schedulingMode") {
+        sc = new SparkContext(master, "test")
+        Thread.currentThread().setContextClassLoader(loader)
+        sc.addJar(jarPath, addToCurrentClassLoader = true)
+        val cl = Utils.getContextOrSparkClassLoader
+        cl.loadClass(s"$packageName.$className")
+      }
+    } finally {
+      Thread.currentThread.setContextClassLoader(originalClassLoader)
     }
   }
 
