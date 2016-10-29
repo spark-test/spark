@@ -1713,13 +1713,21 @@ class SparkContext(config: SparkConf) extends Logging {
       logWarning("null specified as parameter to addJar")
     } else {
       var key = ""
-      if (path.contains("\\")) {
+
+      val uri = if (path.contains("\\")) {
         // For local paths with backslashes on Windows, URI throws an exception
-        key = env.rpcEnv.fileServer.addJar(new File(path))
+        new File(path).toURI
       } else {
         val uri = new URI(path)
         // SPARK-17650: Make sure this is a valid URL before adding it to the list of dependencies
         Utils.validateURL(uri)
+        uri
+      }
+
+      if (path.contains("\\")) {
+        // For local paths with backslashes on Windows, URI throws an exception
+        key = env.rpcEnv.fileServer.addJar(new File(uri))
+      } else {
         key = uri.getScheme match {
           // A JAR file which exists only on the driver node
           case null | "file" =>
@@ -1763,7 +1771,8 @@ class SparkContext(config: SparkConf) extends Logging {
         if (addToCurrentClassLoader) {
           val currentCL = Utils.getContextOrSparkClassLoader
           currentCL match {
-            case cl: MutableURLClassLoader => cl.addURL(new URI(key).toURL())
+            case cl: MutableURLClassLoader =>
+              cl.addURL(uri.toURL)
             case _ => logWarning(s"Unsupported cl $currentCL will not update jars thread cl")
           }
         }
