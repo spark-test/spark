@@ -303,9 +303,29 @@ class SparkContextSuite extends SparkFunSuite with LocalSparkContext with Eventu
     sc.addJar("dummy.jar")
     sc.addJar("")
     sc.addJar(tmpDir.getAbsolutePath)
+    val jarPath = TestUtils.createDummyJar(tempDir, packageName, className)
 
     sc.listJars().size should be (1)
     sc.listJars().head should include (tmpJar.getName)
+  }
+
+  for (
+    schedulingMode <- Seq("local_mode", "non_local_mode")
+  ) {
+    val tempDir = Utils.createTempDir().toString
+    val master = schedulingMode match {
+      case "local_mode" => "local"
+      case "non_local_mode" => "local-cluster[1,1,1024]"
+    }
+    val packageName = s"scala_$schedulingMode"
+    val className = "DummyClass"
+    val jarPath = TestUtils.createDummyJar(tempDir, packageName, className)
+
+    test(s"jar can be added and used driver side in $schedulingMode") {
+      sc = new SparkContext(master, "test")
+      sc.addJar(jarPath, addToCurrentClassLoader = true)
+      Utils.getContextOrSparkClassLoader.loadClass(s"$packageName.$className")
+    }
   }
 
   test("Cancelling job group should not cause SparkContext to shutdown (SPARK-6414)") {

@@ -438,13 +438,15 @@ class AddFileTests(PySparkTestCase):
     def test_add_jar(self):
         jvm = self.sc._jvm
         # We shouldn't be able to load anything from the package before it is added
-        self.assertFalse(isinstance(jvm.sparkR.test.hello, JavaClass))
+        self.assertFalse(isinstance(jvm.pysparktests.DummyClass, JavaClass))
+        # Generate and compile the test jar
+        destDir = os.path.join(SPARK_HOME, "python/test_support/jar")
+        jarName = jvm.org.apache.spark.TestUtils.createDummyJar(
+            destDir, "pysparktests", "DummyClass")
         # Load the new jar
-        path = os.path.join(SPARK_HOME, "./R/pkg/inst/test_support/sparktestjar_2.10-1.0.jar")
-        self.sc.addJar(path, True)
-        self.assertTrue(self.sc._jsc.sc().addedJars().toString().find("sparktestjar") != -1)
-        # Try and load a different one of the classes
-        self.assertTrue(isinstance(jvm.sparkR.test.basicFunction, JavaClass))
+        self.sc.addJar(jarName, True)
+        # Try and load the class
+        self.assertTrue(isinstance(jvm.pysparktests.DummyClas, JavaClass))
 
     def test_add_file_recursively_locally(self):
         path = os.path.join(SPARK_HOME, "python/test_support/hello")
