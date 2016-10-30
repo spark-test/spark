@@ -428,7 +428,7 @@ class AddFileTests(PySparkTestCase):
         # Load the new jar
         self.sc.addJar(jarName, True)
         # Try and load the class
-        self.assertTrue(isinstance(jvm.pysparktests.DummyClas, JavaClass))
+        self.assertTrue(isinstance(jvm.pysparktests.DummyClass, JavaClass))
 
     def test_add_file_recursively_locally(self):
         path = os.path.join(SPARK_HOME, "python/test_support/hello")
