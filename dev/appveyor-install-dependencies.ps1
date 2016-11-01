@@ -114,7 +114,7 @@ $env:HADOOP_HOME = "$hadoopPath/winutils-master/hadoop-$hadoopVer"
 Pop-Location
 
 # ========================== R
-$rVer = "3.3.1"
+$rVer = "3.3.0"
 $rToolsVer = "3.4.0"
 
 InstallR
