@@ -194,10 +194,11 @@ class ReceiverTracker(ssc: StreamingContext, skipReceiverLaunch: Boolean = false
       // Finally, stop the endpoint
       ssc.env.rpcEnv.stop(endpoint)
       endpoint = null
-      receivedBlockTracker.stop()
-      logInfo("ReceiverTracker stopped")
       trackerState = Stopped
     }
+
+    receivedBlockTracker.stop()
+    logInfo("ReceiverTracker stopped")
   }
 
   /** Allocate all unallocated blocks to the given batch. */
