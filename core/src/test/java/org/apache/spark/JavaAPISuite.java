@@ -1075,12 +1075,14 @@ public class JavaAPISuite implements Serializable {
     byte[] content2 = "spark is also easy to use.\n".getBytes(StandardCharsets.UTF_8);
 
     String tempDirName = tempDir.getAbsolutePath();
-    Files.write(content1, new File(tempDirName + "/part-00000"));
-    Files.write(content2, new File(tempDirName + "/part-00001"));
+    String path1 = new File(tempDirName + "/part-00000").getPath();
+    String path2 = new File(tempDirName + "/part-00001").getPath();
+    Files.write(content1, new File(path1));
+    Files.write(content2, new File(path2));
 
     Map<String, String> container = new HashMap<>();
-    container.put(new URI(tempDirName+"/part-00000").getPath(), new Text(content1).toString());
-    container.put(new URI(tempDirName+"/part-00001").getPath(), new Text(content2).toString());
+    container.put(new URI(path1).getPath(), new Text(content1).toString());
+    container.put(new URI(path2).getPath(), new Text(content2).toString());
 
     JavaPairRDD<String, String> readRDD = sc.wholeTextFiles(tempDirName, 3);
     List<Tuple2<String, String>> result = readRDD.collect();
