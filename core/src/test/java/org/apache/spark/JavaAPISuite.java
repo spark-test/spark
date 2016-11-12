@@ -1079,17 +1079,13 @@ public class JavaAPISuite implements Serializable {
     Files.write(content2, new File(tempDirName + "/part-00001"));
 
     Map<String, String> container = new HashMap<>();
-    container.put(tempDirName+"/part-00000", new Text(content1).toString());
-    container.put(tempDirName+"/part-00001", new Text(content2).toString());
+    container.put(new URI(tempDirName+"/part-00000").getPath(), new Text(content1).toString());
+    container.put(new URI(tempDirName+"/part-00001").getPath(), new Text(content2).toString());
 
     JavaPairRDD<String, String> readRDD = sc.wholeTextFiles(tempDirName, 3);
     List<Tuple2<String, String>> result = readRDD.collect();
 
-    for(String str : container.keySet()) {
-      System.out.println(str);
-    }
     for (Tuple2<String, String> res : result) {
-      System.out.println(new URI(res._1()).getPath());
       assertEquals(res._2(), container.get(new URI(res._1()).getPath()));
     }
   }
