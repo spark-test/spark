@@ -201,6 +201,14 @@ class ReceiverTracker(ssc: StreamingContext, skipReceiverLaunch: Boolean = false
       logInfo("ReceiverTracker stopped")
       trackerState = Stopped
     }
+
+    if (trackerState == Initialized) {
+      // First, stop the receivers
+      trackerState = Stopping
+      receivedBlockTracker.stop()
+      logInfo("ReceiverTracker stopped")
+      trackerState = Stopped
+    }
   }
 
   /** Allocate all unallocated blocks to the given batch. */
