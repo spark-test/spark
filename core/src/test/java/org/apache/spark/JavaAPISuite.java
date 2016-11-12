@@ -1085,7 +1085,11 @@ public class JavaAPISuite implements Serializable {
     JavaPairRDD<String, String> readRDD = sc.wholeTextFiles(tempDirName, 3);
     List<Tuple2<String, String>> result = readRDD.collect();
 
+    for(String str : container.keySet()) {
+      System.out.println(str);
+    }
     for (Tuple2<String, String> res : result) {
+      System.out.println(new URI(res._1()).getPath());
       assertEquals(res._2(), container.get(new URI(res._1()).getPath()));
     }
   }
