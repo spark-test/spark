@@ -167,6 +167,7 @@ class ReceiverTracker(ssc: StreamingContext, skipReceiverLaunch: Boolean = false
 
   /** Stop the receiver execution thread. */
   def stop(graceful: Boolean): Unit = synchronized {
+    System.out.println("++++++++++" + trackerState.toString)
     if (isTrackerStarted) {
       // First, stop the receivers
       trackerState = Stopping
