@@ -146,7 +146,7 @@ object SparkHadoopMapReduceWriter extends Logging {
       case c: Configurable => c.setConf(hadoopConf)
       case _ => ()
     }
-    var writer = taskFormat.getRecordWriter(taskContext)
+    val writer = taskFormat.getRecordWriter(taskContext)
       .asInstanceOf[RecordWriter[K, V]]
     require(writer != null, "Unable to obtain RecordWriter")
     var recordsWritten = 0L
@@ -163,20 +163,12 @@ object SparkHadoopMapReduceWriter extends Logging {
             outputMetricsAndBytesWrittenCallback, recordsWritten)
           recordsWritten += 1
         }
-        if (writer != null) {
-          writer.close(taskContext)
-          writer = null
-        }
+
         committer.commitTask(taskContext)
       }(catchBlock = {
         committer.abortTask(taskContext)
         logError(s"Task ${taskContext.getTaskAttemptID} aborted.")
-      }, finallyBlock = {
-        if (writer != null) {
-          writer.close(taskContext)
-          writer = null
-        }
-      })
+      }, finallyBlock = writer.close(taskContext))
 
       outputMetricsAndBytesWrittenCallback.foreach {
         case (om, callback) =>
