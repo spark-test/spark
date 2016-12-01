@@ -28,7 +28,7 @@ install:
   - ps: .\dev\appveyor-install-dependencies.ps1
 
 build_script:
-  - cmd: mvn -DskipTests -Phadoop-2.6 -Phive -Phive-thriftserver package
+  - cmd: mvn -DskipTests -Phadoop-2.6 -Phive -Phive-thriftserver --quiet package
 
 test_script:
   - cmd: mvn -Phadoop-2.6 -Phive -Phive-thriftserver --fail-never test
