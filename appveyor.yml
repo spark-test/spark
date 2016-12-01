@@ -53,5 +53,5 @@ notifications:
     on_build_status_changed: false
 
 test_script:
-  - cmd: sbt "test-only org.apache.spark.sql.hive.*"
+  - cmd: sbt "test-only org.apache.spark.sql.sql.catalyst.*"
 
