@@ -20,22 +20,38 @@ shallow_clone: true
 platform: x64
 configuration: Debug
 
+environment:
+  # Disable lint
+  NOLINT_ON_COMPILE: 0
+
 cache:
   - C:\Users\appveyor\.m2
 
 install:
   # Install maven and dependencies
   - ps: .\dev\appveyor-install-dependencies.ps1
+  # Install sbt to run individual tests
+  - ps: |
+      Add-Type -AssemblyName System.IO.Compression.FileSystem
+      if (!(Test-Path -Path "C:\sbt" )) {
+        (new-object System.Net.WebClient).DownloadFile(
+          'https://dl.bintray.com/sbt/native-packages/sbt/0.13.7/sbt-0.13.7.zip',
+          'C:\sbt-bin.zip'
+        )
+        [System.IO.Compression.ZipFile]::ExtractToDirectory("C:\sbt-bin.zip", "C:\sbt")
+      }
+  - cmd: SET PATH=C:\sbt\sbt\bin;%JAVA_HOME%\bin;%PATH%
+  - cmd: SET SBT_OPTS=-XX:MaxPermSize=2g -Xmx4g
 
 build_script:
-  - cmd: mvn -DskipTests -Phadoop-2.6 -Phive -Phive-thriftserver --quiet package
-
-test_script:
-  - cmd: mvn -Phadoop-2.6 -Phive -Phive-thriftserver --fail-never test
+  - cmd: sbt clean package
 
 notifications:
   - provider: Email
     on_build_success: false
     on_build_failure: false
     on_build_status_changed: false
+
+test_script:
+  - cmd: sbt "test-only org.apache.spark.sql.*"
 
