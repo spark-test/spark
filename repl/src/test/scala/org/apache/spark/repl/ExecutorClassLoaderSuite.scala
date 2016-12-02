@@ -135,14 +135,22 @@ class ExecutorClassLoaderSuite
   test("fetch classes using Spark's RpcEnv") {
     val env = mock[SparkEnv]
     val rpcEnv = mock[RpcEnv]
-    when(env.rpcEnv).thenReturn(rpcEnv)
-    when(rpcEnv.openChannel(anyString())).thenAnswer(new Answer[ReadableByteChannel]() {
-      override def answer(invocation: InvocationOnMock): ReadableByteChannel = {
-        val uri = new URI(invocation.getArguments()(0).asInstanceOf[String])
-        val path = Paths.get(tempDir1.getAbsolutePath(), uri.getPath().stripPrefix("/"))
-        FileChannel.open(path, StandardOpenOption.READ)
+    var channel: FileChannel = null
+    Utils.tryWithSafeFinally {
+      when(env.rpcEnv).thenReturn(rpcEnv)
+      when(rpcEnv.openChannel(anyString())).thenAnswer(new Answer[ReadableByteChannel]() {
+        override def answer(invocation: InvocationOnMock): ReadableByteChannel = {
+          val uri = new URI(invocation.getArguments()(0).asInstanceOf[String])
+          val path = Paths.get(tempDir1.getAbsolutePath(), uri.getPath().stripPrefix("/"))
+          channel = FileChannel.open(path, StandardOpenOption.READ)
+          channel
+        }
+      })
+    } {
+      if (channel != null){
+        channel.close()
       }
-    })
+    }
 
     val classLoader = new ExecutorClassLoader(new SparkConf(), env, "spark://localhost:1234",
       getClass().getClassLoader(), false)
