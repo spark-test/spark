@@ -146,7 +146,7 @@ object SparkHadoopMapReduceWriter extends Logging {
       case c: Configurable => c.setConf(hadoopConf)
       case _ => ()
     }
-    var writer = taskFormat.getRecordWriter(taskContext)
+    val writer = taskFormat.getRecordWriter(taskContext)
       .asInstanceOf[RecordWriter[K, V]]
     require(writer != null, "Unable to obtain RecordWriter")
     var recordsWritten = 0L
@@ -154,32 +154,23 @@ object SparkHadoopMapReduceWriter extends Logging {
     // Write all rows in RDD partition.
     try {
       val ret = Utils.tryWithSafeFinallyAndFailureCallbacks {
-        // Write rows out, release resource and commit the task.
-        while (iterator.hasNext) {
-          val pair = iterator.next()
-          writer.write(pair._1, pair._2)
+        Utils.tryWithSafeFinally {
+          while (iterator.hasNext) {
+            val pair = iterator.next()
+            writer.write(pair._1, pair._2)
 
-          // Update bytes written metric every few records
-          SparkHadoopWriterUtils.maybeUpdateOutputMetrics(
-            outputMetricsAndBytesWrittenCallback, recordsWritten)
-          recordsWritten += 1
-        }
-        if (writer != null) {
+            // Update bytes written metric every few records
+            SparkHadoopWriterUtils.maybeUpdateOutputMetrics(
+              outputMetricsAndBytesWrittenCallback, recordsWritten)
+            recordsWritten += 1
+          }
+        } {
           writer.close(taskContext)
-          writer = null
         }
         committer.commitTask(taskContext)
       }(catchBlock = {
-        // If there is an error, release resource and then abort the task.
-        try {
-          if (writer != null) {
-            writer.close(taskContext)
-            writer = null
-          }
-        } finally {
-          committer.abortTask(taskContext)
-          logError(s"Task ${taskContext.getTaskAttemptID} aborted.")
-        }
+        committer.abortTask(taskContext)
+        logError(s"Task ${taskContext.getTaskAttemptID} aborted.")
       })
 
       outputMetricsAndBytesWrittenCallback.foreach {
