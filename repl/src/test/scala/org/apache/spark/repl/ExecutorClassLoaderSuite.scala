@@ -128,31 +128,23 @@ class ExecutorClassLoaderSuite
     val resourceName: String = parentResourceNames.head
     val resources: util.Enumeration[URL] = classLoader.getResources(resourceName)
     assert(resources.hasMoreElements, s"Resource $resourceName not found")
-    val fileReader = Source.fromInputStream(resources.nextElement().openStream()).bufferedReader()
-    assert(fileReader.readLine().contains("resource"), "File doesn't contain 'resource'")
+    Utils.tryWithResource(Source.fromInputStream(resources.nextElement().openStream())) { bs =>
+      val fileReader = bs.bufferedReader()
+      assert(fileReader.readLine().contains("resource"), "File doesn't contain 'resource'")
+    }
   }
 
   test("fetch classes using Spark's RpcEnv") {
     val env = mock[SparkEnv]
     val rpcEnv = mock[RpcEnv]
-    var channel: ReadableByteChannel = null
-    Utils.tryWithSafeFinally {
-      when(env.rpcEnv).thenReturn(rpcEnv)
-      when {
-        channel = rpcEnv.openChannel(anyString())
-        channel
-      }.thenAnswer(new Answer[ReadableByteChannel]() {
-        override def answer(invocation: InvocationOnMock): ReadableByteChannel = {
-          val uri = new URI(invocation.getArguments()(0).asInstanceOf[String])
-          val path = Paths.get(tempDir1.getAbsolutePath(), uri.getPath().stripPrefix("/"))
-          FileChannel.open(path, StandardOpenOption.READ)
-        }
-      })
-    } {
-      if (channel != null){
-        channel.close()
+    when(env.rpcEnv).thenReturn(rpcEnv)
+    when(rpcEnv.openChannel(anyString())).thenAnswer(new Answer[ReadableByteChannel]() {
+      override def answer(invocation: InvocationOnMock): ReadableByteChannel = {
+        val uri = new URI(invocation.getArguments()(0).asInstanceOf[String])
+        val path = Paths.get(tempDir1.getAbsolutePath(), uri.getPath().stripPrefix("/"))
+        FileChannel.open(path, StandardOpenOption.READ)
       }
-    }
+    })
 
     val classLoader = new ExecutorClassLoader(new SparkConf(), env, "spark://localhost:1234",
       getClass().getClassLoader(), false)
