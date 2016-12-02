@@ -24,8 +24,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.{Paths, StandardOpenOption}
 import java.util
 
-import scala.concurrent.duration._
-import scala.io.Source
+import scala.io.{BufferedSource, Source}
 import scala.language.implicitConversions
 
 import com.google.common.io.Files
@@ -34,8 +33,6 @@ import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import org.scalatest.BeforeAndAfterAll
-import org.scalatest.concurrent.Interruptor
-import org.scalatest.concurrent.Timeouts._
 import org.scalatest.mock.MockitoSugar
 
 import org.apache.spark._
@@ -61,7 +58,7 @@ class ExecutorClassLoaderSuite
     super.beforeAll()
     tempDir1 = Utils.createTempDir()
     tempDir2 = Utils.createTempDir()
-    url1 = "file://" + tempDir1
+    url1 = "file://" + tempDir1.toURI.getPath
     urls2 = List(tempDir2.toURI.toURL).toArray
     childClassNames.foreach(TestUtils.createCompiledClass(_, tempDir1, "1"))
     parentResourceNames.foreach { x =>
@@ -118,8 +115,17 @@ class ExecutorClassLoaderSuite
     val resourceName: String = parentResourceNames.head
     val is = classLoader.getResourceAsStream(resourceName)
     assert(is != null, s"Resource $resourceName not found")
-    val content = Source.fromInputStream(is, "UTF-8").getLines().next()
-    assert(content.contains("resource"), "File doesn't contain 'resource'")
+
+    var bufferedSource: BufferedSource = null
+    Utils.tryWithSafeFinally {
+      bufferedSource = Source.fromInputStream(is, "UTF-8")
+      val content = bufferedSource.getLines().next()
+      assert(content.contains("resource"), "File doesn't contain 'resource'")
+    } {
+      if (bufferedSource != null) {
+        bufferedSource.close()
+      }
+    }
   }
 
   test("resources from parent") {
@@ -128,8 +134,17 @@ class ExecutorClassLoaderSuite
     val resourceName: String = parentResourceNames.head
     val resources: util.Enumeration[URL] = classLoader.getResources(resourceName)
     assert(resources.hasMoreElements, s"Resource $resourceName not found")
-    val fileReader = Source.fromInputStream(resources.nextElement().openStream()).bufferedReader()
-    assert(fileReader.readLine().contains("resource"), "File doesn't contain 'resource'")
+
+    var bufferedSource: BufferedSource = null
+    Utils.tryWithSafeFinally {
+      bufferedSource = Source.fromInputStream(resources.nextElement().openStream())
+      val fileReader = bufferedSource.bufferedReader()
+      assert(fileReader.readLine().contains("resource"), "File doesn't contain 'resource'")
+    } {
+      if (bufferedSource != null) {
+        bufferedSource.close()
+      }
+    }
   }
 
   test("fetch classes using Spark's RpcEnv") {
