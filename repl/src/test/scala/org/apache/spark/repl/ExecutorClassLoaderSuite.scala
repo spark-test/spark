@@ -115,8 +115,17 @@ class ExecutorClassLoaderSuite
     val resourceName: String = parentResourceNames.head
     val is = classLoader.getResourceAsStream(resourceName)
     assert(is != null, s"Resource $resourceName not found")
-    val content = Source.fromInputStream(is, "UTF-8").getLines().next()
-    assert(content.contains("resource"), "File doesn't contain 'resource'")
+
+    var bufferedSource: BufferedSource = null
+    Utils.tryWithSafeFinally {
+      bufferedSource = Source.fromInputStream(is, "UTF-8")
+      val content = bufferedSource.getLines().next()
+      assert(content.contains("resource"), "File doesn't contain 'resource'")
+    } {
+      if (bufferedSource != null) {
+        bufferedSource.close()
+      }
+    }
   }
 
   test("resources from parent") {
