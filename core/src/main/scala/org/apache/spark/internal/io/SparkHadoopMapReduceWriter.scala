@@ -146,14 +146,14 @@ object SparkHadoopMapReduceWriter extends Logging {
       case c: Configurable => c.setConf(hadoopConf)
       case _ => ()
     }
-    val writer = taskFormat.getRecordWriter(taskContext)
-      .asInstanceOf[RecordWriter[K, V]]
-    require(writer != null, "Unable to obtain RecordWriter")
     var recordsWritten = 0L
 
     // Write all rows in RDD partition.
     try {
       val ret = Utils.tryWithSafeFinallyAndFailureCallbacks {
+        val writer = taskFormat.getRecordWriter(taskContext)
+        require(writer != null, "Unable to obtain RecordWriter")
+
         Utils.tryWithSafeFinally {
           while (iterator.hasNext) {
             val pair = iterator.next()
