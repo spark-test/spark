@@ -24,8 +24,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.{Paths, StandardOpenOption}
 import java.util
 
-import scala.concurrent.duration._
-import scala.io.Source
+import scala.io.{BufferedSource, Source}
 import scala.language.implicitConversions
 
 import com.google.common.io.Files
@@ -34,8 +33,6 @@ import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import org.scalatest.BeforeAndAfterAll
-import org.scalatest.concurrent.Interruptor
-import org.scalatest.concurrent.Timeouts._
 import org.scalatest.mock.MockitoSugar
 
 import org.apache.spark._
@@ -128,9 +125,16 @@ class ExecutorClassLoaderSuite
     val resourceName: String = parentResourceNames.head
     val resources: util.Enumeration[URL] = classLoader.getResources(resourceName)
     assert(resources.hasMoreElements, s"Resource $resourceName not found")
-    Utils.tryWithResource(Source.fromInputStream(resources.nextElement().openStream())) { bs =>
-      val fileReader = bs.bufferedReader()
+
+    var bufferedSource: BufferedSource = null
+    Utils.tryWithSafeFinally {
+      bufferedSource = Source.fromInputStream(resources.nextElement().openStream())
+      val fileReader = bufferedSource.bufferedReader()
       assert(fileReader.readLine().contains("resource"), "File doesn't contain 'resource'")
+    } {
+      if (bufferedSource != null) {
+        bufferedSource.close()
+      }
     }
   }
 
