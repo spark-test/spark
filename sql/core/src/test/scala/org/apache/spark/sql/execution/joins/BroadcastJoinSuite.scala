@@ -92,7 +92,6 @@ class BroadcastJoinSuite extends QueryTest with SQLTestUtils {
   }
 
   test("unsafe broadcast hash outer join updates peak execution memory") {
-    assume(!Utils.isWindows)
     testBroadcastJoinPeak[BroadcastHashJoinExec]("unsafe broadcast hash outer join", "left_outer")
   }
 
