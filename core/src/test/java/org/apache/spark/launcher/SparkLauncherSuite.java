@@ -174,10 +174,10 @@ public class SparkLauncherSuite {
       .addAppArgs("proc");
     final Process app = launcher.launch();
 
-    new OutputRedirector(app.getErrorStream(), TF);
+    new OutputRedirector(app.getInputStream(), TF);
     app.waitFor();
     BufferedReader reader =
-            new BufferedReader(new InputStreamReader(app.getInputStream()));
+            new BufferedReader(new InputStreamReader(app.getErrorStream()));
     StringBuilder builder = new StringBuilder();
     String line = null;
     while ( (line = reader.readLine()) != null) {
