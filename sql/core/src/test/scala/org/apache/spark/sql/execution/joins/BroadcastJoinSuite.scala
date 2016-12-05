@@ -28,7 +28,6 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.internal.SQLConf
 import org.apache.spark.sql.test.SQLTestUtils
 import org.apache.spark.sql.types.{LongType, ShortType}
-import org.apache.spark.util.Utils
 
 /**
  * Test various broadcast join operators.
@@ -87,7 +86,6 @@ class BroadcastJoinSuite extends QueryTest with SQLTestUtils {
   }
 
   test("unsafe broadcast hash join updates peak execution memory") {
-    assume(!Utils.isWindows)
     testBroadcastJoinPeak[BroadcastHashJoinExec]("unsafe broadcast hash join", "inner")
   }
 
