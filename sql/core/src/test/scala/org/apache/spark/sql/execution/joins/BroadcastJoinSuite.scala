@@ -116,7 +116,6 @@ class BroadcastJoinSuite extends QueryTest with SQLTestUtils {
   }
 
   test("broadcast hint isn't propagated after a join") {
-    assume(!Utils.isWindows)
     withSQLConf(SQLConf.AUTO_BROADCASTJOIN_THRESHOLD.key -> "-1") {
       val df1 = spark.createDataFrame(Seq((1, "4"), (2, "2"))).toDF("key", "value")
       val df2 = spark.createDataFrame(Seq((1, "1"), (2, "2"))).toDF("key", "value")
