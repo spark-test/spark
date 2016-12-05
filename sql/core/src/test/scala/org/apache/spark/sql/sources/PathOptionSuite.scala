@@ -22,6 +22,7 @@ import org.apache.spark.sql.catalyst.TableIdentifier
 import org.apache.spark.sql.execution.datasources.LogicalRelation
 import org.apache.spark.sql.test.SharedSQLContext
 import org.apache.spark.sql.types.{IntegerType, Metadata, MetadataBuilder, StructType}
+import org.apache.hadoop.fs.Path
 
 class TestOptionsSource extends SchemaRelationProvider with CreatableRelationProvider {
 
@@ -53,8 +54,8 @@ class TestOptionsRelation(val options: Map[String, String])(@transient val sessi
   // We can't get the relation directly for write path, here we put the path option in schema
   // metadata, so that we can test it later.
   override def schema: StructType = {
-    val metadataWithPath = pathOption.map {
-      path => new MetadataBuilder().putString("path", path).build()
+    val metadataWithPath = pathOption.map { path =>
+      new MetadataBuilder().putString("path", path).build()
     }
     new StructType().add("i", IntegerType, true, metadataWithPath.getOrElse(Metadata.empty))
   }
@@ -82,15 +83,16 @@ class PathOptionSuite extends DataSourceTest with SharedSQLContext {
 
   test("path option also exist for write path") {
     withTable("src") {
-      withTempPath { path =>
+      withTempPath { p =>
+        val path = new Path(p.getAbsolutePath).toString
         sql(
           s"""
             |CREATE TABLE src
             |USING ${classOf[TestOptionsSource].getCanonicalName}
-            |OPTIONS (PATH '${path.getAbsolutePath}')
+            |OPTIONS (PATH '$path')
             |AS SELECT 1
           """.stripMargin)
-        assert(spark.table("src").schema.head.metadata.getString("path") == path.getAbsolutePath)
+        assert(spark.table("src").schema.head.metadata.getString("path") == path)
       }
     }
 
