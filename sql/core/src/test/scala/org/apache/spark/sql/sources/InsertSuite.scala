@@ -38,7 +38,7 @@ class InsertSuite extends DataSourceTest with SharedSQLContext {
         |CREATE TEMPORARY TABLE jsonTable (a int, b string)
         |USING org.apache.spark.sql.json.DefaultSource
         |OPTIONS (
-        |  path '${path.toString}'
+        |  path '${path.toURI.toString}'
         |)
       """.stripMargin)
   }
