@@ -86,6 +86,7 @@ class PathOptionSuite extends DataSourceTest with SharedSQLContext {
     withTable("src") {
       withTempPath { p =>
         val path = new Path(p.getAbsolutePath).toString
+        println("++++++++++++++++" + path)
         sql(
           s"""
             |CREATE TABLE src
