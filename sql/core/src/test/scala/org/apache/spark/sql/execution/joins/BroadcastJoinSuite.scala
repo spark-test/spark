@@ -165,7 +165,6 @@ class BroadcastJoinSuite extends QueryTest with SQLTestUtils {
   }
 
   test("join key rewritten") {
-    assume(!Utils.isWindows)
     val l = Literal(1L)
     val i = Literal(2)
     val s = Literal.create(3, ShortType)
