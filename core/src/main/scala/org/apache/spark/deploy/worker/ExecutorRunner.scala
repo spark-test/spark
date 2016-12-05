@@ -146,7 +146,7 @@ private[deploy] class ExecutorRunner(
         memory, sparkHome.getAbsolutePath, substituteVariables)
       val command = builder.command()
       val formattedCommand = command.asScala.mkString("\"", "\" \"", "\"")
-      logInfo(s"Launch command: $formattedCommand")
+      logError(s"Launch command: $formattedCommand")
 
       builder.directory(executorDir)
       builder.environment.put("SPARK_EXECUTOR_DIRS", appLocalDirs.mkString(File.pathSeparator))
@@ -184,7 +184,7 @@ private[deploy] class ExecutorRunner(
       worker.send(ExecutorStateChanged(appId, execId, state, Some(message), Some(exitCode)))
     } catch {
       case interrupted: InterruptedException =>
-        logInfo("Runner thread for executor " + fullId + " interrupted")
+        logError("Runner thread for executor " + fullId + " interrupted")
         state = ExecutorState.KILLED
         killProcess(None)
       case e: Exception =>
