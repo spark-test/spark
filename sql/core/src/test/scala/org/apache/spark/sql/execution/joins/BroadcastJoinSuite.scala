@@ -28,6 +28,7 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.internal.SQLConf
 import org.apache.spark.sql.test.SQLTestUtils
 import org.apache.spark.sql.types.{LongType, ShortType}
+import org.apache.spark.util.Utils
 
 /**
  * Test various broadcast join operators.
@@ -38,6 +39,10 @@ import org.apache.spark.sql.types.{LongType, ShortType}
  */
 class BroadcastJoinSuite extends QueryTest with SQLTestUtils {
   import testImplicits._
+
+  // This test is failed on Windows due to the failure of initiating executors by the path length
+  // limitation. See SPARK-18666.
+  assume(!Utils.isWindows)
 
   protected var spark: SparkSession = null
 
