@@ -17,6 +17,8 @@
 
 package org.apache.spark.launcher;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -172,9 +174,18 @@ public class SparkLauncherSuite {
       .addAppArgs("proc");
     final Process app = launcher.launch();
 
-    new OutputRedirector(app.getInputStream(), TF);
     new OutputRedirector(app.getErrorStream(), TF);
-    assertEquals(0, app.waitFor());
+    app.waitFor();
+    BufferedReader reader =
+            new BufferedReader(new InputStreamReader(app.getInputStream()));
+    StringBuilder builder = new StringBuilder();
+    String line = null;
+    while ( (line = reader.readLine()) != null) {
+      builder.append(line);
+      builder.append(System.getProperty("line.separator"));
+    }
+    String result = builder.toString();
+    System.out.println(result);
   }
 
   public static class SparkLauncherTestApp {
