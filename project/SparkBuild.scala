@@ -419,7 +419,7 @@ object SparkBuild extends PomBuild {
     fork := true,
     outputStrategy in run := Some (StdoutOutput),
 
-    javaOptions ++= Seq("-Xmx2G", "-XX:MaxPermSize=256m"),
+    javaOptions ++= Seq("-Xmx2G", "-XX:MaxPermSize=256m", "-XX:-UseGCOverheadLimit"),
 
     sparkShell := {
       (runMain in Compile).toTask(" org.apache.spark.repl.Main -usejavacp").value
