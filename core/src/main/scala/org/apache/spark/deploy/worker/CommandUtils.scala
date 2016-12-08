@@ -49,6 +49,8 @@ object CommandUtils extends Logging {
     val localCommand = buildLocalCommand(
       command, securityMgr, substituteArguments, classPaths, env)
     val commandSeq = buildCommandSeq(localCommand, memory, sparkHome)
+
+    println("333333 : " + commandSeq.mkString(","))
     val builder = new ProcessBuilder(commandSeq: _*)
     val environment = builder.environment()
     for ((key, value) <- localCommand.environment) {
@@ -91,6 +93,7 @@ object CommandUtils extends Logging {
       newEnvironment += (SecurityManager.ENV_AUTH_SECRET -> securityMgr.getSecretKey)
     }
 
+    println("222222 : " + command.classPathEntries.mkString(","))
     Command(
       command.mainClass,
       command.arguments.map(substituteArguments),

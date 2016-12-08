@@ -89,10 +89,6 @@ private[spark] class StandaloneSchedulerBackend(
       }
 
     // Start executors with a few necessary configs for registering with the scheduler
-    println(s"classPathEntries : ${classPathEntries.mkString(",")}")
-    println(s"testingClassPath : ${testingClassPath.mkString(",")}")
-    println(s"libraryPathEntries :${libraryPathEntries.mkString(",")}")
-
     val sparkJavaOpts = Utils.sparkJavaOpts(conf, SparkConf.isExecutorStartupConf)
     val javaOpts = sparkJavaOpts ++ extraJavaOpts
     val command = Command("org.apache.spark.executor.CoarseGrainedExecutorBackend",
