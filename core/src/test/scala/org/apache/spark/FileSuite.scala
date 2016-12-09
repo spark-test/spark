@@ -549,7 +549,9 @@ class FileSuite extends SparkFunSuite with LocalSparkContext {
         .mapPartitionsWithInputSplit { (split, part) =>
           Iterator(split.asInstanceOf[NewFileSplit].getPath.toUri.getPath)
         }.collect()
-    assert(inputPaths.toSet === Set(s"$outDir/part-00000", s"$outDir/part-00001"))
+    val outPathOne = new Path(outDir, "part-00000").toUri.getPath
+    val outPathTwo = new Path(outDir, "part-00001").toUri.getPath
+    assert(inputPaths.toSet === Set(outPathOne, outPathTwo))
   }
 
   test("spark.files.ignoreCorruptFiles should work both HadoopRDD and NewHadoopRDD") {
