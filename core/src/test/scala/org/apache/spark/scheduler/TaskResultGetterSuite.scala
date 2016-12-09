@@ -180,7 +180,7 @@ class TaskResultGetterSuite extends SparkFunSuite with BeforeAndAfter with Local
     import scala.io.Source
 
     println(excSource.toString)
-    Source.fromFile(excSource.toUri).getLines().foreach(println(_))
+    println(excSource.code)
     val excFile = TestUtils.createCompiledClass("MyException", srcDir, excSource, Seq.empty)
     println(excFile.toString)
     Source.fromFile(excFile).getLines().foreach(println(_))
