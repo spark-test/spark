@@ -177,17 +177,9 @@ class TaskResultGetterSuite extends SparkFunSuite with BeforeAndAfter with Local
         |public class MyException extends Exception {
         |}
       """.stripMargin)
-    import scala.io.Source
-
-    println(excSource.toString)
-    println(excSource.code)
     val excFile = TestUtils.createCompiledClass("MyException", srcDir, excSource, Seq.empty)
-    println(excFile.toString)
-    Source.fromFile(excFile).getLines().foreach(println(_))
     val jarFile = new File(tempDir, "testJar-%s.jar".format(System.currentTimeMillis()))
-    println(jarFile.toString)
     TestUtils.createJar(Seq(excFile), jarFile, directoryPrefix = Some("repro"))
-    Source.fromFile(jarFile).getLines().foreach(println(_))
 
     // ensure we reset the classloader after the test completes
     val originalClassLoader = Thread.currentThread.getContextClassLoader
