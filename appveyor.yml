@@ -53,5 +53,7 @@ notifications:
     on_build_status_changed: false
 
 test_script:
+  - cmd: printenv
+  - cmd: printenv PATH
   - cmd: sbt "test-only org.apache.spark.rdd.PipedRDDSuite"
 
