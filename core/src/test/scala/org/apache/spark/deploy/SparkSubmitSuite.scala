@@ -389,6 +389,7 @@ class SparkSubmitSuite
   }
 
   test("includes jars passed in through --jars") {
+    assume(!Utils.isWindows)
     val unusedJar = TestUtils.createJarWithClasses(Seq.empty)
     val jar1 = TestUtils.createJarWithClasses(Seq("SparkSubmitClassA"))
     val jar2 = TestUtils.createJarWithClasses(Seq("SparkSubmitClassB"))
@@ -406,6 +407,7 @@ class SparkSubmitSuite
 
   // SPARK-7287
   test("includes jars passed in through --packages") {
+    assume(!Utils.isWindows)
     val unusedJar = TestUtils.createJarWithClasses(Seq.empty)
     val main = MavenCoordinate("my.great.lib", "mylib", "0.1")
     val dep = MavenCoordinate("my.great.dep", "mylib", "0.1")
@@ -427,6 +429,7 @@ class SparkSubmitSuite
   // TODO(SPARK-9603): Building a package is flaky on Jenkins Maven builds.
   // See https://gist.github.com/shivaram/3a2fecce60768a603dac for a error log
   ignore("correctly builds R packages included in a jar with --packages") {
+    assume(!Utils.isWindows)
     assume(RUtils.isRInstalled, "R isn't installed on this machine.")
     // Check if the SparkR package is installed
     assume(RUtils.isSparkRInstalled, "SparkR is not installed in this build.")

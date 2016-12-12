@@ -17,6 +17,7 @@
 
 package org.apache.spark
 
+import org.apache.spark.util.Utils
 import org.scalatest.BeforeAndAfterAll
 
 import org.apache.spark.network.TransportContext
@@ -56,6 +57,7 @@ class ExternalShuffleServiceSuite extends ShuffleSuite with BeforeAndAfterAll {
 
   // This test ensures that the external shuffle service is actually in use for the other tests.
   test("using external shuffle service") {
+    assume(!Utils.isWindows)
     sc = new SparkContext("local-cluster[2,1,1024]", "test", conf)
     sc.env.blockManager.externalShuffleServiceEnabled should equal(true)
     sc.env.blockManager.shuffleClient.getClass should equal(classOf[ExternalShuffleClient])

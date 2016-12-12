@@ -25,7 +25,7 @@ import scala.io.Source
 import org.apache.spark.{LocalSparkContext, SparkContext, SparkFunSuite}
 import org.apache.spark.scheduler.{SparkListener, SparkListenerExecutorAdded}
 import org.apache.spark.scheduler.cluster.ExecutorInfo
-import org.apache.spark.util.SparkConfWithEnv
+import org.apache.spark.util.{Utils, SparkConfWithEnv}
 
 class LogUrlsStandaloneSuite extends SparkFunSuite with LocalSparkContext {
 
@@ -33,6 +33,7 @@ class LogUrlsStandaloneSuite extends SparkFunSuite with LocalSparkContext {
   private val WAIT_TIMEOUT_MILLIS = 10000
 
   test("verify that correct log urls get propagated from workers") {
+    assume(!Utils.isWindows)
     sc = new SparkContext("local-cluster[2,1,1024]", "test")
 
     val listener = new SaveExecutorInfo
@@ -53,6 +54,7 @@ class LogUrlsStandaloneSuite extends SparkFunSuite with LocalSparkContext {
   }
 
   test("verify that log urls reflect SPARK_PUBLIC_DNS (SPARK-6175)") {
+    assume(!Utils.isWindows)
     val SPARK_PUBLIC_DNS = "public_dns"
     val conf = new SparkConfWithEnv(Map("SPARK_PUBLIC_DNS" -> SPARK_PUBLIC_DNS)).set(
       "spark.extraListeners", classOf[SaveExecutorInfo].getName)

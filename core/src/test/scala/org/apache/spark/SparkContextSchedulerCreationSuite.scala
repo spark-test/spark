@@ -17,6 +17,7 @@
 
 package org.apache.spark
 
+import org.apache.spark.util.Utils
 import org.scalatest.PrivateMethodTester
 
 import org.apache.spark.internal.Logging
@@ -124,6 +125,7 @@ class SparkContextSchedulerCreationSuite
   }
 
   test("local-cluster") {
+    assume(!Utils.isWindows)
     createTaskScheduler("local-cluster[3, 14, 1024]").backend match {
       case s: StandaloneSchedulerBackend => // OK
       case _ => fail()

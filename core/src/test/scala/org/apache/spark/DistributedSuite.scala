@@ -17,6 +17,7 @@
 
 package org.apache.spark
 
+import org.apache.spark.util.Utils
 import org.scalatest.concurrent.Timeouts._
 import org.scalatest.Matchers
 import org.scalatest.time.{Millis, Span}
@@ -33,6 +34,7 @@ class DistributedSuite extends SparkFunSuite with Matchers with LocalSparkContex
   val clusterUrl = "local-cluster[2,1,1024]"
 
   test("task throws not serializable exception") {
+    assume(!Utils.isWindows)
     // Ensures that executors do not crash when an exn is not serializable. If executors crash,
     // this test will hang. Correct behavior is that executors don't crash but fail tasks
     // and the scheduler throws a SparkException.
@@ -272,6 +274,7 @@ class DistributedSuite extends SparkFunSuite with Matchers with LocalSparkContex
   }
 
   test("recover from node failures with replication") {
+    assume(!Utils.isWindows)
     import DistributedSuite.{markNodeIfIdentity, failOnMarkedIdentity}
     DistributedSuite.amMaster = true
     // Using more than two nodes so we don't have a symmetric communication pattern and might
@@ -293,6 +296,7 @@ class DistributedSuite extends SparkFunSuite with Matchers with LocalSparkContex
   }
 
   test("unpersist RDDs") {
+    assume(!Utils.isWindows)
     DistributedSuite.amMaster = true
     sc = new SparkContext("local-cluster[3,1,1024]", "test")
     val data = sc.parallelize(Seq(true, false, false, false), 4)

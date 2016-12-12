@@ -17,6 +17,8 @@
 
 package org.apache.spark.broadcast
 
+import org.apache.spark.util.Utils
+
 import scala.util.Random
 
 import org.scalatest.Assertions
@@ -62,6 +64,7 @@ class BroadcastSuite extends SparkFunSuite with LocalSparkContext {
   }
 
   test("Accessing TorrentBroadcast variables in a local cluster") {
+    assume(!Utils.isWindows)
     val numSlaves = 4
     val conf = new SparkConf
     conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
@@ -92,6 +95,7 @@ class BroadcastSuite extends SparkFunSuite with LocalSparkContext {
   }
 
   test("Test Lazy Broadcast variables with TorrentBroadcast") {
+    assume(!Utils.isWindows)
     val numSlaves = 2
     sc = new SparkContext("local-cluster[%d, 1, 1024]".format(numSlaves), "test")
     val rdd = sc.parallelize(1 to numSlaves)
@@ -101,18 +105,22 @@ class BroadcastSuite extends SparkFunSuite with LocalSparkContext {
   }
 
   test("Unpersisting TorrentBroadcast on executors only in local mode") {
+    assume(!Utils.isWindows)
     testUnpersistTorrentBroadcast(distributed = false, removeFromDriver = false)
   }
 
   test("Unpersisting TorrentBroadcast on executors and driver in local mode") {
+    assume(!Utils.isWindows)
     testUnpersistTorrentBroadcast(distributed = false, removeFromDriver = true)
   }
 
   test("Unpersisting TorrentBroadcast on executors only in distributed mode") {
+    assume(!Utils.isWindows)
     testUnpersistTorrentBroadcast(distributed = true, removeFromDriver = false)
   }
 
   test("Unpersisting TorrentBroadcast on executors and driver in distributed mode") {
+    assume(!Utils.isWindows)
     testUnpersistTorrentBroadcast(distributed = true, removeFromDriver = true)
   }
 

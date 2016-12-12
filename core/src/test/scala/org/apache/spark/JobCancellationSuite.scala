@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfter
 import org.scalatest.Matchers
 
 import org.apache.spark.scheduler.{SparkListener, SparkListenerTaskStart}
-import org.apache.spark.util.ThreadUtils
+import org.apache.spark.util.{Utils, ThreadUtils}
 
 /**
  * Test suite for cancelling running jobs. We run the cancellation tasks for single job action
@@ -66,6 +66,7 @@ class JobCancellationSuite extends SparkFunSuite with Matchers with BeforeAndAft
   }
 
   test("cluster mode, FIFO scheduler") {
+    assume(!Utils.isWindows)
     val conf = new SparkConf().set("spark.scheduler.mode", "FIFO")
     sc = new SparkContext("local-cluster[2,1,1024]", "test", conf)
     testCount()
@@ -75,6 +76,7 @@ class JobCancellationSuite extends SparkFunSuite with Matchers with BeforeAndAft
   }
 
   test("cluster mode, fair scheduler") {
+    assume(!Utils.isWindows)
     val conf = new SparkConf().set("spark.scheduler.mode", "FAIR")
     val xmlPath = getClass.getClassLoader.getResource("fairscheduler.xml").getFile()
     conf.set("spark.scheduler.allocation.file", xmlPath)

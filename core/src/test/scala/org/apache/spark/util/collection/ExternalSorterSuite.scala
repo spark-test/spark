@@ -40,10 +40,12 @@ class ExternalSorterSuite extends SparkFunSuite with LocalSparkContext {
 
   // Load defaults, otherwise SPARK_HOME is not found
   testWithMultipleSer("spilling in local cluster", loadDefaults = true) {
+    assume(!org.apache.spark.util.Utils.isWindows)
     (conf: SparkConf) => testSpillingInLocalCluster(conf, 2)
   }
 
   testWithMultipleSer("spilling in local cluster with many reduce tasks", loadDefaults = true) {
+    assume(!org.apache.spark.util.Utils.isWindows)
     (conf: SparkConf) => testSpillingInLocalCluster(conf, 100)
   }
 
@@ -120,6 +122,7 @@ class ExternalSorterSuite extends SparkFunSuite with LocalSparkContext {
   }
 
   test("spilling with hash collisions") {
+    assume(!org.apache.spark.util.Utils.isWindows)
     val size = 1000
     val conf = createSparkConf(loadDefaults = true, kryo = false)
     conf.set("spark.shuffle.spill.numElementsForceSpillThreshold", (size / 2).toString)
@@ -181,6 +184,7 @@ class ExternalSorterSuite extends SparkFunSuite with LocalSparkContext {
   }
 
   test("spilling with many hash collisions") {
+    assume(!org.apache.spark.util.Utils.isWindows)
     val size = 1000
     val conf = createSparkConf(loadDefaults = true, kryo = false)
     conf.set("spark.shuffle.spill.numElementsForceSpillThreshold", (size / 2).toString)
@@ -204,6 +208,7 @@ class ExternalSorterSuite extends SparkFunSuite with LocalSparkContext {
   }
 
   test("spilling with hash collisions using the Int.MaxValue key") {
+    assume(!org.apache.spark.util.Utils.isWindows)
     val size = 1000
     val conf = createSparkConf(loadDefaults = true, kryo = false)
     conf.set("spark.shuffle.spill.numElementsForceSpillThreshold", (size / 2).toString)
@@ -230,6 +235,7 @@ class ExternalSorterSuite extends SparkFunSuite with LocalSparkContext {
   }
 
   test("spilling with null keys and values") {
+    assume(!org.apache.spark.util.Utils.isWindows)
     val size = 1000
     val conf = createSparkConf(loadDefaults = true, kryo = false)
     conf.set("spark.shuffle.spill.numElementsForceSpillThreshold", (size / 2).toString)

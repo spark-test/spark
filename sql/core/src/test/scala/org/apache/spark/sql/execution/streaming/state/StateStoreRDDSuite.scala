@@ -177,6 +177,7 @@ class StateStoreRDDSuite extends SparkFunSuite with BeforeAndAfter with BeforeAn
   }
 
   test("distributed test") {
+    assume(!Utils.isWindows)
     quietly {
 
       withSparkSession(

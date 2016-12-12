@@ -207,10 +207,12 @@ class ExternalAppendOnlyMapSuite extends SparkFunSuite with LocalSparkContext {
   }
 
   test("spilling") {
+    assume(!org.apache.spark.util.Utils.isWindows)
     testSimpleSpilling()
   }
 
   test("spilling with compression") {
+    assume(!org.apache.spark.util.Utils.isWindows)
     // Keep track of which compression codec we're using to report in test failure messages
     var lastCompressionCodec: Option[String] = None
     try {
@@ -232,6 +234,7 @@ class ExternalAppendOnlyMapSuite extends SparkFunSuite with LocalSparkContext {
   }
 
   test("spilling with compression and encryption") {
+    assume(!org.apache.spark.util.Utils.isWindows)
     testSimpleSpilling(Some(CompressionCodec.DEFAULT_COMPRESSION_CODEC), encrypt = true)
   }
 

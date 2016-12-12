@@ -74,11 +74,13 @@ class ReplayListenerSuite extends SparkFunSuite with BeforeAndAfter with LocalSp
 
   // This assumes the correctness of EventLoggingListener
   test("End-to-end replay") {
+    assume(!Utils.isWindows)
     testApplicationReplay()
   }
 
   // This assumes the correctness of EventLoggingListener
   test("End-to-end replay with compression") {
+    assume(!Utils.isWindows)
     CompressionCodec.ALL_COMPRESSION_CODECS.foreach { codec =>
       testApplicationReplay(Some(codec))
     }

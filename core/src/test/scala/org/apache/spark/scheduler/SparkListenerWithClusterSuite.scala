@@ -17,6 +17,8 @@
 
 package org.apache.spark.scheduler
 
+import org.apache.spark.util.Utils
+
 import scala.collection.mutable
 
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll}
@@ -34,10 +36,13 @@ class SparkListenerWithClusterSuite extends SparkFunSuite with LocalSparkContext
   val WAIT_TIMEOUT_MILLIS = 10000
 
   before {
-    sc = new SparkContext("local-cluster[2,1,1024]", "SparkListenerSuite")
+    if (!Utils.isWindows) {
+      sc = new SparkContext("local-cluster[2,1,1024]", "SparkListenerSuite")
+    }
   }
 
   test("SparkListener sends executor added message") {
+    assume(!Utils.isWindows)
     val listener = new SaveExecutorInfo
     sc.addSparkListener(listener)
 

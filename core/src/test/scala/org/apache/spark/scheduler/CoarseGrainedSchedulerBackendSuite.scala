@@ -18,11 +18,12 @@
 package org.apache.spark.scheduler
 
 import org.apache.spark.{LocalSparkContext, SparkConf, SparkContext, SparkException, SparkFunSuite}
-import org.apache.spark.util.{RpcUtils, SerializableBuffer}
+import org.apache.spark.util.{Utils, RpcUtils, SerializableBuffer}
 
 class CoarseGrainedSchedulerBackendSuite extends SparkFunSuite with LocalSparkContext {
 
   test("serialized task larger than max RPC message size") {
+    assume(!Utils.isWindows)
     val conf = new SparkConf
     conf.set("spark.rpc.message.maxSize", "1")
     conf.set("spark.default.parallelism", "1")

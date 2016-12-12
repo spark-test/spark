@@ -60,6 +60,7 @@ class HiveSparkSubmitSuite
   }
 
   test("temporary Hive UDF: define a UDF and use it") {
+    assume(!Utils.isWindows)
     val unusedJar = TestUtils.createJarWithClasses(Seq.empty)
     val jar1 = TestUtils.createJarWithClasses(Seq("SparkSubmitClassA"))
     val jar2 = TestUtils.createJarWithClasses(Seq("SparkSubmitClassB"))
@@ -77,6 +78,7 @@ class HiveSparkSubmitSuite
   }
 
   test("permanent Hive UDF: define a UDF and use it") {
+    assume(!Utils.isWindows)
     val unusedJar = TestUtils.createJarWithClasses(Seq.empty)
     val jar1 = TestUtils.createJarWithClasses(Seq("SparkSubmitClassA"))
     val jar2 = TestUtils.createJarWithClasses(Seq("SparkSubmitClassB"))
@@ -94,6 +96,7 @@ class HiveSparkSubmitSuite
   }
 
   test("permanent Hive UDF: use a already defined permanent function") {
+    assume(!Utils.isWindows)
     val unusedJar = TestUtils.createJarWithClasses(Seq.empty)
     val jar1 = TestUtils.createJarWithClasses(Seq("SparkSubmitClassA"))
     val jar2 = TestUtils.createJarWithClasses(Seq("SparkSubmitClassB"))
@@ -111,6 +114,7 @@ class HiveSparkSubmitSuite
   }
 
   test("SPARK-8368: includes jars passed in through --jars") {
+    assume(!Utils.isWindows)
     val unusedJar = TestUtils.createJarWithClasses(Seq.empty)
     val jar1 = TestUtils.createJarWithClasses(Seq("SparkSubmitClassA"))
     val jar2 = TestUtils.createJarWithClasses(Seq("SparkSubmitClassB"))
@@ -130,6 +134,7 @@ class HiveSparkSubmitSuite
   }
 
   test("SPARK-8020: set sql conf in spark conf") {
+    assume(!Utils.isWindows)
     val unusedJar = TestUtils.createJarWithClasses(Seq.empty)
     val args = Seq(
       "--class", SparkSQLConfTest.getClass.getName.stripSuffix("$"),
@@ -166,6 +171,7 @@ class HiveSparkSubmitSuite
   }
 
   test("SPARK-9757 Persist Parquet relation with decimal column") {
+    assume(!Utils.isWindows)
     val unusedJar = TestUtils.createJarWithClasses(Seq.empty)
     val args = Seq(
       "--class", SPARK_9757.getClass.getName.stripSuffix("$"),
@@ -179,6 +185,7 @@ class HiveSparkSubmitSuite
   }
 
   test("SPARK-11009 fix wrong result of Window function in cluster mode") {
+    assume(!Utils.isWindows)
     val unusedJar = TestUtils.createJarWithClasses(Seq.empty)
     val args = Seq(
       "--class", SPARK_11009.getClass.getName.stripSuffix("$"),
@@ -192,6 +199,7 @@ class HiveSparkSubmitSuite
   }
 
   test("SPARK-14244 fix window partition size attribute binding failure") {
+    assume(!Utils.isWindows)
     val unusedJar = TestUtils.createJarWithClasses(Seq.empty)
     val args = Seq(
       "--class", SPARK_14244.getClass.getName.stripSuffix("$"),
@@ -205,6 +213,7 @@ class HiveSparkSubmitSuite
   }
 
   test("set spark.sql.warehouse.dir") {
+    assume(!Utils.isWindows)
     val unusedJar = TestUtils.createJarWithClasses(Seq.empty)
     val args = Seq(
       "--class", SetWarehouseLocationTest.getClass.getName.stripSuffix("$"),
@@ -218,6 +227,7 @@ class HiveSparkSubmitSuite
   }
 
   test("set hive.metastore.warehouse.dir") {
+    assume(!Utils.isWindows)
     // In this test, we set hive.metastore.warehouse.dir in hive-site.xml but
     // not set spark.sql.warehouse.dir. So, the warehouse dir should be
     // the value of hive.metastore.warehouse.dir. Also, the value of
@@ -299,6 +309,7 @@ class HiveSparkSubmitSuite
 
   test("SPARK-18360: default table path of tables in default database should depend on the " +
     "location of default database") {
+    assume(!Utils.isWindows)
     val unusedJar = TestUtils.createJarWithClasses(Seq.empty)
     val args = Seq(
       "--class", SPARK_18360.getClass.getName.stripSuffix("$"),

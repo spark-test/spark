@@ -27,6 +27,7 @@ import org.apache.spark.internal.config._
 import org.apache.spark.security.CryptoStreamUtils._
 import org.apache.spark.serializer.{JavaSerializer, SerializerManager}
 import org.apache.spark.storage.TempShuffleBlockId
+import org.apache.spark.util.Utils
 
 class CryptoStreamUtilsSuite extends SparkFunSuite {
 
@@ -95,6 +96,7 @@ class CryptoStreamUtilsSuite extends SparkFunSuite {
   }
 
   test("encryption key propagation to executors") {
+    assume(!Utils.isWindows)
     val conf = createConf().setAppName("Crypto Test").setMaster("local-cluster[1,1,1024]")
     val sc = new SparkContext(conf)
     try {

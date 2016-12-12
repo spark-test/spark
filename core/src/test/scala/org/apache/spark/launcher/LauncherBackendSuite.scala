@@ -19,6 +19,8 @@ package org.apache.spark.launcher
 
 import java.util.concurrent.TimeUnit
 
+import org.apache.spark.util.Utils
+
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
@@ -35,6 +37,7 @@ class LauncherBackendSuite extends SparkFunSuite with Matchers {
 
   tests.foreach { case (name, master) =>
     test(s"$name: launcher handle") {
+      assume(!(Utils.isWindows && name == "standalone/client"))
       testWithMaster(master)
     }
   }

@@ -311,6 +311,7 @@ class ContextCleanerSuite extends ContextCleanerSuiteBase {
   }
 
   test("automatically cleanup RDD + shuffle + broadcast in distributed mode") {
+    assume(!Utils.isWindows)
     sc.stop()
 
     val conf2 = new SparkConf()
