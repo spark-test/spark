@@ -219,7 +219,7 @@ class PipedRDDSuite extends SparkFunSuite with SharedSparkContext {
   }
 
   def testExportInputFile(varName: String) {
-    if (testCommandAvailable("printenv")) {
+    if (testCommandAvailable("printenv path")) {
       val nums = new HadoopRDD(sc, new JobConf(), classOf[TextInputFormat], classOf[LongWritable],
         classOf[Text], 2) {
         override def getPartitions: Array[Partition] = Array(generateFakeHadoopPartition())
