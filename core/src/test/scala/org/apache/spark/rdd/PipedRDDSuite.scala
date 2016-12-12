@@ -224,6 +224,10 @@ class PipedRDDSuite extends SparkFunSuite with SharedSparkContext {
     testExportInputFile("mapreduce_map_input_file")
   }
 
+  test("test pipe exports abc") {
+    testExportInputFile("abc")
+  }
+
   def testCommandAvailable(command: String): Boolean = {
     val attempt = Try(Process(command).run().exitValue())
     attempt.isSuccess && attempt.get == 0
