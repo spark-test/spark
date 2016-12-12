@@ -33,7 +33,7 @@ import org.apache.spark.util.Utils
 
 class PipedRDDSuite extends SparkFunSuite with SharedSparkContext {
   val listEnvs = if (Utils.isWindows) {
-    "cmd.exe /c set"
+    "cmd.exe /C set"
   } else {
     "printenv"
   }
@@ -153,7 +153,7 @@ class PipedRDDSuite extends SparkFunSuite with SharedSparkContext {
     } else {
       Set(0, 4, 5)
     }
-    assert(Set(0, 4, 5) == charCounts)
+    assert(expected == charCounts)
   }
 
   test("pipe with env variable") {
