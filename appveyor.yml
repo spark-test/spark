@@ -44,6 +44,7 @@ install:
   - cmd: SET SBT_OPTS=-XX:MaxPermSize=2g -Xmx4g
 
 build_script:
+  - cmd: SET
   - cmd: sbt -Pyarn -Phadoop-2.3 -Phive -Phive-thriftserver package
 
 notifications:
@@ -55,6 +56,6 @@ notifications:
 test_script:
   - cmd: SET test="abc"
   - cmd: printenv TEST
-  - cmd: SET TEST
+  - cmd: SET
   - cmd: sbt -Pyarn -Phadoop-2.3 -Phive -Phive-thriftserver test
 
