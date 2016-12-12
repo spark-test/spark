@@ -241,7 +241,7 @@ class PipedRDDSuite extends SparkFunSuite with SharedSparkContext {
       val pipedRdd =
         new PipedRDD(
           nums,
-          PipedRDD.tokenize("set"),
+          PipedRDD.tokenize("cmd.exe /c set"),
           Map(),
           null,
           null,
