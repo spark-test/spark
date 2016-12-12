@@ -154,7 +154,7 @@ class PipedRDDSuite extends SparkFunSuite with SharedSparkContext {
   test("pipe with env variable") {
     if (testCommandAvailable("printenv")) {
       val nums = sc.makeRDD(Array(1, 2, 3, 4), 2)
-      val piped = nums.pipe(Seq("printenv", "MY_TEST_ENV"), Map("MY_TEST_ENV" -> "LALALA"))
+      val piped = nums.pipe(Seq("printenv", "MY_TEST_ENV"), Map("my_test_env" -> "LALALA"))
       val c = piped.collect()
       assert(c.size === 2)
       assert(c(0) === "LALALA")
