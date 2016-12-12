@@ -70,7 +70,6 @@ private[spark] class HadoopPartition(rddId: Int, override val index: Int, s: Inp
       // map_input_file is deprecated in favor of mapreduce_map_input_file but set both
       // since it's not removed yet
       val path = is.getPath.toString
-      Map("map_input_file".toUpperCase -> path, "mapreduce_map_input_file".toUpperCase -> path) ++
       Map("map_input_file" -> path, "mapreduce_map_input_file" -> path)
     case _ =>
       Map.empty[String, String]
