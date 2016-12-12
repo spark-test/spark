@@ -64,18 +64,15 @@ private[spark] class HadoopPartition(rddId: Int, override val index: Int, s: Inp
   /**
    * Get any environment variables that should be added to the users environment when running pipes
    * @return a Map with the environment variables and corresponding values, it could be empty
-   */
-  def getPipeEnvVars(): Map[String, String] = {
-    val envVars: Map[String, String] = if (inputSplit.value.isInstanceOf[FileSplit]) {
-      val is: FileSplit = inputSplit.value.asInstanceOf[FileSplit]
+  */
+  def getPipeEnvVars(): Map[String, String] = inputSplit.value match {
+    case is: FileSplit =>
       // map_input_file is deprecated in favor of mapreduce_map_input_file but set both
       // since it's not removed yet
-      Map("map_input_file" -> is.getPath().toString(),
-        "mapreduce_map_input_file" -> is.getPath().toString())
-    } else {
-      Map()
-    }
-    envVars
+      val path = is.getPath.toString
+      Map("map_input_file".toUpperCase -> path, "mapreduce_map_input_file".toUpperCase -> path)
+    case _ =>
+      Map.empty[String, String]
   }
 }
 

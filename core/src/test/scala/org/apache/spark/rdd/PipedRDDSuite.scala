@@ -142,6 +142,12 @@ class PipedRDDSuite extends SparkFunSuite with SharedSparkContext {
     val piped = data.pipe("wc -c")
     assert(piped.count == 8)
     val charCounts = piped.map(_.trim.toInt).collect().toSet
+    val expected = if (Utils.isWindows) {
+      // Note that newline character on Windows is \r\n which are two.
+      Set(0, 5, 6)
+    } else {
+      Set(0, 4, 5)
+    }
     assert(Set(0, 4, 5) == charCounts)
   }
 
@@ -219,7 +225,7 @@ class PipedRDDSuite extends SparkFunSuite with SharedSparkContext {
   }
 
   def testExportInputFile(varName: String) {
-    if (testCommandAvailable("printenv path")) {
+    if (testCommandAvailable("printenv")) {
       val nums = new HadoopRDD(sc, new JobConf(), classOf[TextInputFormat], classOf[LongWritable],
         classOf[Text], 2) {
         override def getPartitions: Array[Partition] = Array(generateFakeHadoopPartition())
