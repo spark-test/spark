@@ -73,6 +73,7 @@ private[spark] class PipedRDD[T: ClassTag](
     // so the user code can access the input filename
     if (split.isInstanceOf[HadoopPartition]) {
       val hadoopSplit = split.asInstanceOf[HadoopPartition]
+      println("++++++++++++" + hadoopSplit.getPipeEnvVars())
       currentEnvVars.putAll(hadoopSplit.getPipeEnvVars().asJava)
     }
 
