@@ -32,6 +32,11 @@ import org.apache.spark._
 import org.apache.spark.util.Utils
 
 class PipedRDDSuite extends SparkFunSuite with SharedSparkContext {
+  val listEnvs = if (Utils.isWindows) {
+    "cmd.exe /c set"
+  } else {
+    "printenv"
+  }
 
   test("basic pipe") {
     if (testCommandAvailable("cat")) {
@@ -152,9 +157,9 @@ class PipedRDDSuite extends SparkFunSuite with SharedSparkContext {
   }
 
   test("pipe with env variable") {
-    if (testCommandAvailable("printenv")) {
+    if (testCommandAvailable(listEnvs)) {
       val nums = sc.makeRDD(Array(1, 2, 3, 4), 2)
-      val piped = nums.pipe(Seq("printenv", "MY_TEST_ENV"), Map("my_test_env" -> "LALALA"))
+      val piped = nums.pipe(Seq(listEnvs, "MY_TEST_ENV"), Map("MY_TEST_ENV" -> "LALALA"))
       val c = piped.collect()
       assert(c.size === 2)
       assert(c(0) === "LALALA")
@@ -225,7 +230,7 @@ class PipedRDDSuite extends SparkFunSuite with SharedSparkContext {
   }
 
   def testExportInputFile(varName: String) {
-    if (testCommandAvailable("printenv")) {
+    if (testCommandAvailable(listEnvs)) {
       val nums = new HadoopRDD(sc, new JobConf(), classOf[TextInputFormat], classOf[LongWritable],
         classOf[Text], 2) {
         override def getPartitions: Array[Partition] = Array(generateFakeHadoopPartition())
@@ -241,7 +246,7 @@ class PipedRDDSuite extends SparkFunSuite with SharedSparkContext {
       val pipedRdd =
         new PipedRDD(
           nums,
-          PipedRDD.tokenize("cmd.exe /c set"),
+          PipedRDD.tokenize(s"$listEnvs $varName"),
           Map(),
           null,
           null,
@@ -250,9 +255,8 @@ class PipedRDDSuite extends SparkFunSuite with SharedSparkContext {
           Codec.defaultCharsetCodec.name)
       val tContext = TaskContext.empty()
       val rddIter = pipedRdd.compute(hadoopPart1, tContext)
-      rddIter.foreach(println(_))
-      //val arr = rddIter.toArray
-      // assert(arr(0) == "/some/path")
+      val arr = rddIter.toArray
+      assert(arr(0) == "/some/path")
     } else {
       // printenv isn't available so just pass the test
     }
