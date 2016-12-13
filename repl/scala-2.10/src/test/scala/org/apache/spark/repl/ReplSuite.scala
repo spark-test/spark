@@ -211,6 +211,7 @@ class ReplSuite extends SparkFunSuite {
   }
 
   test("local-cluster mode") {
+    assume(!Utils.isWindows)
     val output = runInterpreter("local-cluster[1,1,1024]",
       """
         |var v = 7
@@ -255,6 +256,7 @@ class ReplSuite extends SparkFunSuite {
   }
 
   test("SPARK-2576 importing SQLContext.implicits._") {
+    assume(!Utils.isWindows)
     // We need to use local-cluster to test this case.
     val output = runInterpreter("local-cluster[1,1,1024]",
       """
@@ -305,6 +307,7 @@ class ReplSuite extends SparkFunSuite {
   }
 
   test("SPARK-2632 importing a method from non serializable class and not using it.") {
+    assume(!Utils.isWindows)
     val output = runInterpreter("local-cluster[1,1,1024]",
     """
       |class TestClass() { def testMethod = 3 }
@@ -353,6 +356,7 @@ class ReplSuite extends SparkFunSuite {
   }
 
   test("collecting objects of class defined in repl - shuffling") {
+    assume(!Utils.isWindows)
     val output = runInterpreter("local-cluster[1,1,1024]",
       """
         |case class Foo(i: Int)
