@@ -53,5 +53,5 @@ notifications:
     on_build_status_changed: false
 
 test_script:
-  - cmd: sbt -Pyarn -Phadoop-2.3 -Phive -Phive-thriftserver test
+  - cmd: sbt -Pyarn -Phadoop-2.3 -Phive -Phive-thriftserver "test-only org.apache.spark.broadcast.BroadcastSuite"
 
