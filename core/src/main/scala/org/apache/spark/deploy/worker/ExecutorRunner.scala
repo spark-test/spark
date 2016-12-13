@@ -146,7 +146,7 @@ private[deploy] class ExecutorRunner(
         memory, sparkHome.getAbsolutePath, substituteVariables)
       val command = builder.command()
       val formattedCommand = command.asScala.mkString("\"", "\" \"", "\"")
-      logError(s"Launch command: $formattedCommand")
+      println(s"Launch command: $formattedCommand")
 
       builder.directory(executorDir)
       builder.environment.put("SPARK_EXECUTOR_DIRS", appLocalDirs.mkString(File.pathSeparator))
