@@ -538,7 +538,7 @@ public class SparkLauncher {
     return handle;
   }
 
-  private ProcessBuilder createBuilder() {
+  public ProcessBuilder createBuilder() {
     List<String> cmd = new ArrayList<>();
     String script = isWindows() ? "spark-submit.cmd" : "spark-submit";
     cmd.add(join(File.separator, builder.getSparkHome(), "bin", script));

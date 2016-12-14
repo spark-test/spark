@@ -170,6 +170,7 @@ public class SparkLauncherSuite {
       .addSparkArg(opts.CLASS, "ShouldBeOverriddenBelow")
       .setMainClass(SparkLauncherTestApp.class.getName())
       .addAppArgs("proc");
+    System.out.println(String.join(" ", launcher.createBuilder().command()));
     final Process app = launcher.launch();
 
     new OutputRedirector(app.getInputStream(), TF);
