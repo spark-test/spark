@@ -61,7 +61,7 @@ class InputOutputMetricsSuite extends SparkFunSuite with SharedSparkContext
     pw.close()
 
     // Path to tmpFile
-    tmpFilePath = "file://" + tmpFile.getAbsolutePath
+    tmpFilePath = tmpFile.toURI.toString
   }
 
   after {
