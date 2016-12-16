@@ -238,7 +238,8 @@ private[deploy] object RPackageUtils extends Logging {
       filesToBundle.foreach { file =>
         // Gets the relative paths for proper naming in the zip file. Note that
         // the separator should always be / for according to ZIP specification.
-        val relPath = file.toURI.toString.replaceFirst(dir.toURI.toString, "")
+        // `relPath` here should be, for example, "/packageTest/def.R" or "/test.R".
+        val relPath = file.toURI.toString.replaceFirst(dir.toURI.toString.stripSuffix("/"), "")
         val fis = new FileInputStream(file)
         val zipEntry = new ZipEntry(relPath)
         zipOutputStream.putNextEntry(zipEntry)
