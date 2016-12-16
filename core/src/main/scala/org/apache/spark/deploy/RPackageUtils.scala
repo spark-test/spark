@@ -231,13 +231,14 @@ private[deploy] object RPackageUtils extends Logging {
     // create a zip file from scratch, do not append to existing file.
     val zipFile = new File(dir, name)
     if (!zipFile.delete()) {
-      logWarning(s"Error deleting ${zipFile.getPath()}")
+      logWarning(s"Error deleting ${zipFile.getPath}")
     }
     val zipOutputStream = new ZipOutputStream(new FileOutputStream(zipFile, false))
     try {
       filesToBundle.foreach { file =>
-        // get the relative paths for proper naming in the zip file
-        val relPath = file.getAbsolutePath.replaceFirst(dir.getAbsolutePath, "")
+        // Gets the relative paths for proper naming in the zip file. Note that
+        // the separator should always be / for according to ZIP specification.
+        val relPath = file.toURI.toString.replaceFirst(dir.toURI.toString, "")
         val fis = new FileInputStream(file)
         val zipEntry = new ZipEntry(relPath)
         zipOutputStream.putNextEntry(zipEntry)
