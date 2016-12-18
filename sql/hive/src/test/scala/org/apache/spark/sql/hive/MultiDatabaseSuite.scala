@@ -69,6 +69,7 @@ class MultiDatabaseSuite extends QueryTest with SQLTestUtils with TestHiveSingle
       activateDatabase(db) {
         withTempPath { dir =>
           val path = dir.getCanonicalPath
+          val uri = dir.toURI.toString
           df.write.format("parquet").mode(SaveMode.Overwrite).save(path)
 
           spark.catalog.createExternalTable("t", path, "parquet")
@@ -80,7 +81,7 @@ class MultiDatabaseSuite extends QueryTest with SQLTestUtils with TestHiveSingle
               |CREATE TABLE t1
               |USING parquet
               |OPTIONS (
-              |  path '$path'
+              |  path '$uri'
               |)
             """.stripMargin)
           assert(getTableNames(Option(db)).contains("t1"))
@@ -94,6 +95,7 @@ class MultiDatabaseSuite extends QueryTest with SQLTestUtils with TestHiveSingle
     withTempDatabase { db =>
       withTempPath { dir =>
         val path = dir.getCanonicalPath
+        val uri = dir.toURI.toString
         df.write.format("parquet").mode(SaveMode.Overwrite).save(path)
         spark.catalog.createExternalTable(s"$db.t", path, "parquet")
 
@@ -105,7 +107,7 @@ class MultiDatabaseSuite extends QueryTest with SQLTestUtils with TestHiveSingle
               |CREATE TABLE $db.t1
               |USING parquet
               |OPTIONS (
-              |  path '$path'
+              |  path '$uri'
               |)
             """.stripMargin)
         assert(getTableNames(Option(db)).contains("t1"))
@@ -206,13 +208,14 @@ class MultiDatabaseSuite extends QueryTest with SQLTestUtils with TestHiveSingle
     withTempDatabase { db =>
       withTempPath { dir =>
         val path = dir.getCanonicalPath
+        val uri = dir.toURI.toString
 
         activateDatabase(db) {
           sql(
             s"""CREATE EXTERNAL TABLE t (id BIGINT)
                |PARTITIONED BY (p INT)
                |STORED AS PARQUET
-               |LOCATION '$path'
+               |LOCATION '$uri'
              """.stripMargin)
 
           checkAnswer(spark.table("t"), spark.emptyDataFrame)
@@ -239,12 +242,13 @@ class MultiDatabaseSuite extends QueryTest with SQLTestUtils with TestHiveSingle
     withTempDatabase { db =>
       withTempPath { dir =>
         val path = dir.getCanonicalPath
+        val uri = dir.toURI.toString
 
         sql(
           s"""CREATE EXTERNAL TABLE $db.t (id BIGINT)
                |PARTITIONED BY (p INT)
                |STORED AS PARQUET
-               |LOCATION '$path'
+               |LOCATION '$uri'
              """.stripMargin)
 
         checkAnswer(spark.table(s"$db.t"), spark.emptyDataFrame)
@@ -281,6 +285,7 @@ class MultiDatabaseSuite extends QueryTest with SQLTestUtils with TestHiveSingle
 
     withTempDir { dir =>
       val path = dir.getCanonicalPath
+      val uri = dir.toURI.toString
 
       {
         val message = intercept[AnalysisException] {
@@ -289,7 +294,7 @@ class MultiDatabaseSuite extends QueryTest with SQLTestUtils with TestHiveSingle
             |CREATE TABLE `d:b`.`t:a` (a int)
             |USING parquet
             |OPTIONS (
-            |  path '$path'
+            |  path '$uri'
             |)
             """.stripMargin)
         }.getMessage
@@ -304,7 +309,7 @@ class MultiDatabaseSuite extends QueryTest with SQLTestUtils with TestHiveSingle
               |CREATE TABLE `d:b`.`table` (a int)
               |USING parquet
               |OPTIONS (
-              |  path '$path'
+              |  path '$uri'
               |)
               """.stripMargin)
         }.getMessage
