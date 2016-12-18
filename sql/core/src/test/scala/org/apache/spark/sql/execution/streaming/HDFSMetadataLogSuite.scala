@@ -218,21 +218,21 @@ class HDFSMetadataLogSuite extends SparkFunSuite with SharedSQLContext {
     fm.delete(path)  // should not throw exception
     f1.close()
 
-//    // Rename
-//    val path1 = new Path(s"$dir/file1")
-//    val path2 = new Path(s"$dir/file2")
-//    fm.create(path1).close()
-//    assert(fm.exists(path1))
-//    fm.rename(path1, path2)
-//    intercept[FileNotFoundException] {
-//      fm.rename(path1, path2)
-//    }
-//    val path3 = new Path(s"$dir/file3")
-//    fm.create(path3).close()
-//    assert(fm.exists(path3))
-//    intercept[FileAlreadyExistsException] {
-//      fm.rename(path2, path3)
-//    }
+    // Rename
+    val path1 = new Path(s"$dir/file1")
+    val path2 = new Path(s"$dir/file2")
+    fm.create(path1).close()
+    assert(fm.exists(path1))
+    fm.rename(path1, path2)
+    intercept[FileNotFoundException] {
+      fm.rename(path1, path2)
+    }
+    val path3 = new Path(s"$dir/file3")
+    fm.create(path3).close()
+    assert(fm.exists(path3))
+    intercept[FileAlreadyExistsException] {
+      fm.rename(path2, path3)
+    }
   }
 }
 
