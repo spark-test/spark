@@ -189,16 +189,16 @@ class HDFSMetadataLogSuite extends SparkFunSuite with SharedSQLContext {
     assert(fm.exists(dir))
     fm.mkdirs(dir)
 
-//    // List
-//    val acceptAllFilter = new PathFilter {
-//      override def accept(path: Path): Boolean = true
-//    }
-//    val rejectAllFilter = new PathFilter {
-//      override def accept(path: Path): Boolean = false
-//    }
-//    assert(fm.list(basePath, acceptAllFilter).exists(_.getPath.getName == "dir"))
-//    assert(fm.list(basePath, rejectAllFilter).length === 0)
-//
+    // List
+    val acceptAllFilter = new PathFilter {
+      override def accept(path: Path): Boolean = true
+    }
+    val rejectAllFilter = new PathFilter {
+      override def accept(path: Path): Boolean = false
+    }
+    assert(fm.list(basePath, acceptAllFilter).exists(_.getPath.getName == "dir"))
+    assert(fm.list(basePath, rejectAllFilter).length === 0)
+
 //    // Create
 //    val path = new Path(s"$dir/file")
 //    assert(!fm.exists(path))
