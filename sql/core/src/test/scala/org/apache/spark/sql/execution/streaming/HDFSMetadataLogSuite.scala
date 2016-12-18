@@ -205,7 +205,7 @@ class HDFSMetadataLogSuite extends SparkFunSuite with SharedSQLContext {
     fm.create(path).close()
     assert(fm.exists(path))
     intercept[IOException] {
-      fm.create(path)
+      fm.create(path).close()
     }
 
     // Open and delete
@@ -213,7 +213,7 @@ class HDFSMetadataLogSuite extends SparkFunSuite with SharedSQLContext {
     fm.delete(path)
     assert(!fm.exists(path))
     intercept[IOException] {
-      fm.open(path)
+      fm.open(path).close()
     }
     fm.delete(path)  // should not throw exception
     f1.close()
