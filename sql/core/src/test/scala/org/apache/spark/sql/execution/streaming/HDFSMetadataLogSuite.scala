@@ -189,50 +189,50 @@ class HDFSMetadataLogSuite extends SparkFunSuite with SharedSQLContext {
     assert(fm.exists(dir))
     fm.mkdirs(dir)
 
-    // List
-    val acceptAllFilter = new PathFilter {
-      override def accept(path: Path): Boolean = true
-    }
-    val rejectAllFilter = new PathFilter {
-      override def accept(path: Path): Boolean = false
-    }
-    assert(fm.list(basePath, acceptAllFilter).exists(_.getPath.getName == "dir"))
-    assert(fm.list(basePath, rejectAllFilter).length === 0)
-
-    // Create
-    val path = new Path(s"$dir/file")
-    assert(!fm.exists(path))
-    fm.create(path).close()
-    assert(fm.exists(path))
-    intercept[IOException] {
-      fm.create(path).close()
-    }
-
-    // Open and delete
-    val f1 = fm.open(path)
-    fm.delete(path)
-    assert(!fm.exists(path))
-    intercept[IOException] {
-      fm.open(path).close()
-    }
-    fm.delete(path)  // should not throw exception
-    f1.close()
-
-    // Rename
-    val path1 = new Path(s"$dir/file1")
-    val path2 = new Path(s"$dir/file2")
-    fm.create(path1).close()
-    assert(fm.exists(path1))
-    fm.rename(path1, path2)
-    intercept[FileNotFoundException] {
-      fm.rename(path1, path2)
-    }
-    val path3 = new Path(s"$dir/file3")
-    fm.create(path3).close()
-    assert(fm.exists(path3))
-    intercept[FileAlreadyExistsException] {
-      fm.rename(path2, path3)
-    }
+//    // List
+//    val acceptAllFilter = new PathFilter {
+//      override def accept(path: Path): Boolean = true
+//    }
+//    val rejectAllFilter = new PathFilter {
+//      override def accept(path: Path): Boolean = false
+//    }
+//    assert(fm.list(basePath, acceptAllFilter).exists(_.getPath.getName == "dir"))
+//    assert(fm.list(basePath, rejectAllFilter).length === 0)
+//
+//    // Create
+//    val path = new Path(s"$dir/file")
+//    assert(!fm.exists(path))
+//    fm.create(path).close()
+//    assert(fm.exists(path))
+//    intercept[IOException] {
+//      fm.create(path)
+//    }
+//
+//    // Open and delete
+//    val f1 = fm.open(path)
+//    fm.delete(path)
+//    assert(!fm.exists(path))
+//    intercept[IOException] {
+//      fm.open(path)
+//    }
+//    fm.delete(path)  // should not throw exception
+//    f1.close()
+//
+//    // Rename
+//    val path1 = new Path(s"$dir/file1")
+//    val path2 = new Path(s"$dir/file2")
+//    fm.create(path1).close()
+//    assert(fm.exists(path1))
+//    fm.rename(path1, path2)
+//    intercept[FileNotFoundException] {
+//      fm.rename(path1, path2)
+//    }
+//    val path3 = new Path(s"$dir/file3")
+//    fm.create(path3).close()
+//    assert(fm.exists(path3))
+//    intercept[FileAlreadyExistsException] {
+//      fm.rename(path2, path3)
+//    }
   }
 }
 
