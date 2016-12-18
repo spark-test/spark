@@ -529,6 +529,7 @@ public class SparkLauncher {
       String.valueOf(LauncherServer.getServerInstance().getPort()));
     pb.environment().put(LauncherProtocol.ENV_LAUNCHER_SECRET, handle.getSecret());
     try {
+      System.out.println(String.join(",", pb.command()));
       handle.setChildProc(pb.start(), loggerName);
     } catch (IOException ioe) {
       handle.kill();
