@@ -33,7 +33,7 @@ import org.apache.spark.{SparkConf, SparkFunSuite}
 import org.apache.spark.sql.execution.streaming.FakeFileSystem._
 import org.apache.spark.sql.execution.streaming.HDFSMetadataLog.{FileContextManager, FileManager, FileSystemManager}
 import org.apache.spark.sql.test.SharedSQLContext
-import org.apache.spark.util.UninterruptibleThread
+import org.apache.spark.util.{UninterruptibleThread, Utils}
 
 class HDFSMetadataLogSuite extends SparkFunSuite with SharedSQLContext {
 
@@ -209,35 +209,32 @@ class HDFSMetadataLogSuite extends SparkFunSuite with SharedSQLContext {
     }
 
     // Open and delete
-    val f1 = fm.open(path)
-    println("++++++++ 1")
-    println("++++++++ 2" + fm.delete(path))
-    assert(!fm.exists(path))
-    println("++++++++ 3")
-    intercept[IOException] {
-      fm.open(path)
-    }
-    println("++++++++ 4")
-    fm.delete(path)  // should not throw exception
-    println("++++++++ 5")
-    f1.close()
-    println("++++++++ 6")
+    Utils.tryWithResource(fm.open(path)) { _ =>
+      fm.delete(path)
+      assert(!fm.exists(path))
 
-//    // Rename
-//    val path1 = new Path(s"$dir/file1")
-//    val path2 = new Path(s"$dir/file2")
-//    fm.create(path1).close()
-//    assert(fm.exists(path1))
-//    fm.rename(path1, path2)
-//    intercept[FileNotFoundException] {
-//      fm.rename(path1, path2)
-//    }
-//    val path3 = new Path(s"$dir/file3")
-//    fm.create(path3).close()
-//    assert(fm.exists(path3))
-//    intercept[FileAlreadyExistsException] {
-//      fm.rename(path2, path3)
-//    }
+      intercept[IOException] {
+        fm.open(path)
+      }
+
+      fm.delete(path) // should not throw exception
+    }
+
+    // Rename
+    val path1 = new Path(s"$dir/file1")
+    val path2 = new Path(s"$dir/file2")
+    fm.create(path1).close()
+    assert(fm.exists(path1))
+    fm.rename(path1, path2)
+    intercept[FileNotFoundException] {
+      fm.rename(path1, path2)
+    }
+    val path3 = new Path(s"$dir/file3")
+    fm.create(path3).close()
+    assert(fm.exists(path3))
+    intercept[FileAlreadyExistsException] {
+      fm.rename(path2, path3)
+    }
   }
 }
 
