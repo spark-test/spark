@@ -444,7 +444,7 @@ object HDFSMetadataLog {
 
     override def delete(path: Path): Boolean = {
       try {
-        return fs.delete(path, true)
+        fs.delete(path, true)
       } catch {
         case e: FileNotFoundException =>
           // ignore if file has already been deleted
