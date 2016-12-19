@@ -33,7 +33,7 @@ import org.apache.spark.{SparkConf, SparkFunSuite}
 import org.apache.spark.sql.execution.streaming.FakeFileSystem._
 import org.apache.spark.sql.execution.streaming.HDFSMetadataLog.{FileContextManager, FileManager, FileSystemManager}
 import org.apache.spark.sql.test.SharedSQLContext
-import org.apache.spark.util.{Utils, UninterruptibleThread}
+import org.apache.spark.util.UninterruptibleThread
 
 class HDFSMetadataLogSuite extends SparkFunSuite with SharedSQLContext {
 
@@ -213,7 +213,7 @@ class HDFSMetadataLogSuite extends SparkFunSuite with SharedSQLContext {
     fm.delete(path)
     assert(!fm.exists(path))
     intercept[IOException] {
-      Utils.tryWithResource(fm.open(path))(_ => ())
+      fm.open(path).close()
     }
     fm.delete(path)  // should not throw exception
     f1.close()
