@@ -378,12 +378,13 @@ object HDFSMetadataLog {
       fc.util().exists(path)
     }
 
-    override def delete(path: Path): Unit = {
+    override def delete(path: Path): Boolean = {
       try {
         fc.delete(path, true)
       } catch {
         case e: FileNotFoundException =>
         // ignore if file has already been deleted
+          false
       }
     }
 
