@@ -212,9 +212,7 @@ class HDFSMetadataLogSuite extends SparkFunSuite with SharedSQLContext {
     val f1 = fm.open(path)
     println(fm.delete(path))
     assert(!fm.exists(path))
-    intercept[IOException] {
-      fm.open(path).close()
-    }
+    fm.open(path).close()
     println(fm.delete(path))  // should not throw exception
     f1.close()
 
