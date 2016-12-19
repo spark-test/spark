@@ -344,13 +344,14 @@ class OrcQuerySuite extends QueryTest with BeforeAndAfterAll with OrcTest {
   test("SPARK-8501: Avoids discovery schema from empty ORC files") {
     withTempPath { dir =>
       val path = dir.getCanonicalPath
+      val uri = dir.toURI.toString
 
       withTable("empty_orc") {
         withTempView("empty", "single") {
           spark.sql(
             s"""CREATE TABLE empty_orc(key INT, value STRING)
                |STORED AS ORC
-               |LOCATION '$path'
+               |LOCATION '$uri'
              """.stripMargin)
 
           val emptyDF = Seq.empty[(Int, String)].toDF("key", "value").coalesce(1)
@@ -447,11 +448,12 @@ class OrcQuerySuite extends QueryTest with BeforeAndAfterAll with OrcTest {
           withTable("dummy_orc") {
             withTempPath { dir =>
               val path = dir.getCanonicalPath
+              val uri = dir.toURI.toString
               spark.sql(
                 s"""
                    |CREATE TABLE dummy_orc(key INT, value STRING)
                    |STORED AS ORC
-                   |LOCATION '$path'
+                   |LOCATION '$uri'
                  """.stripMargin)
 
               spark.sql(
@@ -500,7 +502,7 @@ class OrcQuerySuite extends QueryTest with BeforeAndAfterAll with OrcTest {
             |create external table dummy_orc (id long, valueField long)
             |partitioned by (partitionValue int)
             |stored as orc
-            |location "${dir.getAbsolutePath}"""".stripMargin)
+            |location "${dir.toURI.toString}"""".stripMargin)
           spark.sql(s"msck repair table dummy_orc")
           checkAnswer(spark.sql("select * from dummy_orc"), df)
         }

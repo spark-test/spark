@@ -202,11 +202,12 @@ class HiveCommandSuite extends QueryTest with SQLTestUtils with TestHiveSingleto
 
       // LOAD DATA INTO non-partitioned table can't specify partition
       intercept[AnalysisException] {
-        sql(s"""$loadQuery INPATH "$testData" INTO TABLE non_part_table PARTITION(ds="1")""")
+        val testPath = testData.toURI.toString
+        sql(s"""$loadQuery INPATH "$testPath" INTO TABLE non_part_table PARTITION(ds="1")""")
       }
 
       withInputFile { path =>
-        sql(s"""$loadQuery INPATH "$path" INTO TABLE non_part_table""")
+        sql(s"""$loadQuery INPATH "${path.toURI.toString}" INTO TABLE non_part_table""")
 
         // Non-local mode is expected to move the file, while local mode is expected to copy it.
         // Check once here that the behavior is the expected.
@@ -300,7 +301,7 @@ class HiveCommandSuite extends QueryTest with SQLTestUtils with TestHiveSingleto
           |LINES TERMINATED BY '\n'
         """.stripMargin)
 
-      val testData = hiveContext.getHiveFile("data/files/employee.dat").getCanonicalPath
+      val testData = hiveContext.getHiveFile("data/files/employee.dat").toURI.toString
 
       sql(s"""LOAD DATA LOCAL INPATH "$testData" INTO TABLE non_part_table""")
       checkAnswer(
