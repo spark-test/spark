@@ -338,7 +338,7 @@ object HDFSMetadataLog {
     def rename(srcPath: Path, destPath: Path): Unit
 
     /** Recursively delete a path if it exists. Should not throw exception if file doesn't exist. */
-    def delete(path: Path): Unit
+    def delete(path: Path): Boolean
 
     /** Whether the file systme is a local FS. */
     def isLocalFileSystem: Boolean
@@ -442,12 +442,13 @@ object HDFSMetadataLog {
       fs.exists(path)
     }
 
-    override def delete(path: Path): Unit = {
+    override def delete(path: Path): Boolean = {
       try {
-        fs.delete(path, true)
+        return fs.delete(path, true)
       } catch {
         case e: FileNotFoundException =>
           // ignore if file has already been deleted
+        false
       }
     }
 
