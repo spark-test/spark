@@ -105,7 +105,15 @@ class StreamingQueryProgress private[sql](
   def json: String = compact(render(jsonValue))
 
   /** The pretty (i.e. indented) JSON representation of this progress. */
-  def prettyJson: String = pretty(render(jsonValue))
+  def prettyJson: String = {
+    println(jsonValue)
+    println("+++++++++++++++++++")
+    println(render(jsonValue))
+    println("+++++++++++++++++++")
+    println(pretty(render(jsonValue)))
+    println("+++++++++++++++++++")
+    pretty(render(jsonValue))
+  }
 
   override def toString: String = prettyJson
 
