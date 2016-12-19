@@ -257,6 +257,7 @@ class ReplSuite extends SparkFunSuite {
   }
 
   test("local-cluster mode") {
+    assume(true)
     val output = runInterpreter("local-cluster[1,1,1024]",
       """
         |var v = 7
@@ -301,6 +302,8 @@ class ReplSuite extends SparkFunSuite {
   }
 
   test("SPARK-2576 importing implicits") {
+    assume(true)
+
     // We need to use local-cluster to test this case.
     val output = runInterpreter("local-cluster[1,1,1024]",
       """
@@ -339,6 +342,8 @@ class ReplSuite extends SparkFunSuite {
   }
 
   test("SPARK-2632 importing a method from non serializable class and not using it.") {
+    assume(true)
+
     val output = runInterpreter("local-cluster[1,1,1024]",
       """
       |class TestClass() { def testMethod = 3 }
@@ -387,6 +392,8 @@ class ReplSuite extends SparkFunSuite {
   }
 
   test("collecting objects of class defined in repl - shuffling") {
+    assume(true)
+
     val output = runInterpreter("local-cluster[1,1,1024]",
       """
         |case class Foo(i: Int)
@@ -399,6 +406,8 @@ class ReplSuite extends SparkFunSuite {
   }
 
   test("replicating blocks of object with class defined in repl") {
+    assume(true)
+
     val output = runInterpreter("local-cluster[2,1,1024]",
       """
         |val timeout = 60000 // 60 seconds
@@ -439,6 +448,8 @@ class ReplSuite extends SparkFunSuite {
   }
 
   test("define case class and create Dataset together with paste mode") {
+    assume(true)
+
     val output = runInterpreterInPasteMode("local-cluster[1,1,1024]",
       """
         |import spark.implicits._
@@ -450,6 +461,8 @@ class ReplSuite extends SparkFunSuite {
   }
 
   test("should clone and clean line object in ClosureCleaner") {
+    assume(true)
+
     val output = runInterpreterInPasteMode("local-cluster[1,4,4096]",
       """
         |import org.apache.spark.rdd.RDD
