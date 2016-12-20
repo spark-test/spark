@@ -108,7 +108,7 @@ class DefaultSource extends StreamSourceProvider with StreamSinkProvider {
 class DataStreamReaderWriterSuite extends StreamTest with BeforeAndAfter {
 
   private def newMetadataDir =
-    Utils.createTempDir(namePrefix = "streaming.metadata").toURI.toString
+    Utils.createTempDir(namePrefix = "streaming.metadata").toURI.toString.stripSuffix("/")
 
   after {
     spark.streams.active.foreach(_.stop())
