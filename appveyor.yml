@@ -84,7 +84,7 @@ install:
   - cmd: SET SBT_OPTS=-XX:MaxPermSize=2g -Xmx4g
 
 build_script:
-  - cmd: sbt %profiles% clean package
+  - cmd: sbt -Phadoop-2.3 %profiles% package
 
 notifications:
   - provider: Email
