@@ -26,20 +26,43 @@ environment:
 
   matrix:
     - goal: "catalyst/test"
+      profiles: ""
     - goal: "sql/test"
+      profiles: ""
     - goal: "hive/test"
+      profiles: "-Phive"
     - goal: "hive-thriftserver/test"
+      profiles: "-Phive-thriftserver"
     - goal: "sql-kafka-0-10/test"
+      profiles: ""
     - goal: "sketch/test"
+      profiles: ""
     - goal: "graphx/test"
+      profiles: ""
     - goal: "streaming/test"
+      profiles: ""
+    - goal: "streaming-kinesis-asl/test"
+      profiles: "-Pkinesis-asl"
     - goal: "streaming-kafka-0-8/test"
+      profiles: ""
     - goal: "streaming-kafka-0-10/test"
+      profiles: ""
     - goal: "streaming-flume-sink/test"
+      profiles: ""
     - goal: "streaming-flume/test"
+      profiles: ""
     - goal: "mllib-local/test"
+      profiles: ""
     - goal: "mllib/test"
+      profiles: ""
     - goal: "examples/test"
+      profiles: ""
+    - goal: "yarn/test"
+      profiles: "-Pyarn"
+    - goal: "network-yarn/test"
+      profiles: "-Pyarn"
+    - goal: "mesos/test"
+      profiles: "-Pmesos"
 
 cache:
   - C:\Users\appveyor\.m2
@@ -70,5 +93,5 @@ notifications:
     on_build_status_changed: false
 
 test_script:
-  - cmd: sbt -Pyarn -Phadoop-2.3 -Phive -Phive-thriftserver %goal%
+  - cmd: sbt -Phadoop-2.3 %profiles% %goal%
 
