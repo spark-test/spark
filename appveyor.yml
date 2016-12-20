@@ -93,5 +93,5 @@ notifications:
     on_build_status_changed: false
 
 test_script:
-  - cmd: sbt -Phadoop-2.3 %profile% %goal%
+  - cmd: sbt -Phadoop-2.3 %profiles% %goal%
 
