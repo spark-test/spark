@@ -24,6 +24,23 @@ environment:
   # Disable lint
   NOLINT_ON_COMPILE: 0
 
+  matrix:
+    - goal: "catalyst/test"
+    - goal: "sql/test"
+    - goal: "hive/test"
+    - goal: "hive-thriftserver/test"
+    - goal: "sql-kafka-0-10/test"
+    - goal: "sketch/test"
+    - goal: "graphx/test"
+    - goal: "streaming/test"
+    - goal: "streaming-kafka-0-8/test"
+    - goal: "streaming-kafka-0-10/test"
+    - goal: "streaming-flume-sink/test"
+    - goal: "streaming-flume/test"
+    - goal: "mllib-local/test"
+    - goal: "mllib/test"
+    - goal: "examples/test"
+
 cache:
   - C:\Users\appveyor\.m2
 
@@ -53,5 +70,5 @@ notifications:
     on_build_status_changed: false
 
 test_script:
-  - cmd: sbt -Pyarn -Phadoop-2.3 -Phive -Phive-thriftserver "test-only org.apache.spark.sql.*"
+  - cmd: sbt -Pyarn -Phadoop-2.3 -Phive -Phive-thriftserver %goal%
 
