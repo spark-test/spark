@@ -25,14 +25,14 @@ environment:
   NOLINT_ON_COMPILE: 0
 
   matrix:
+    - goal: "core/test"
+      profiles: ""
     - goal: "catalyst/test"
       profiles: ""
     - goal: "sql/test"
       profiles: ""
     - goal: "hive/test"
       profiles: "-Phive"
-    - goal: "hive-thriftserver/test"
-      profiles: "-Phive-thriftserver"
     - goal: "sql-kafka-0-10/test"
       profiles: ""
     - goal: "sketch/test"
@@ -41,8 +41,6 @@ environment:
       profiles: ""
     - goal: "streaming/test"
       profiles: ""
-    - goal: "streaming-kinesis-asl/test"
-      profiles: "-Pkinesis-asl"
     - goal: "streaming-kafka-0-8/test"
       profiles: ""
     - goal: "streaming-kafka-0-10/test"
@@ -57,13 +55,16 @@ environment:
       profiles: ""
     - goal: "examples/test"
       profiles: ""
-    - goal: "yarn/test"
-      profiles: "-Pyarn"
-    - goal: "network-yarn/test"
-      profiles: "-Pyarn"
-    - goal: "mesos/test"
-      profiles: "-Pmesos"
-
+    - goal: "repl/test"
+      profiles: ""
+    - goal: "network-common/test"
+      profiles: ""
+    - goal: "network-shuffle/test"
+      profiles: ""
+    - goal: "launcher/test"
+      profiles: ""
+    - goal: "unsafe/test"
+      profiles: ""
 cache:
   - C:\Users\appveyor\.m2
 
