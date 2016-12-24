@@ -122,14 +122,14 @@ class DataSourceWithHiveMetastoreCatalogSuite
     test(s"Persist non-partitioned $provider relation into metastore as external table") {
       withTempPath { dir =>
         withTable("t") {
-          val path = dir.getCanonicalFile
+          val uri = dir.toURI
 
           withSQLConf(SQLConf.PARQUET_WRITE_LEGACY_FORMAT.key -> "true") {
             testDF
               .write
               .mode(SaveMode.Overwrite)
               .format(provider)
-              .option("path", path.toString)
+              .option("path", uri.toString)
               .saveAsTable("t")
           }
 
@@ -140,7 +140,7 @@ class DataSourceWithHiveMetastoreCatalogSuite
           assert(hiveTable.storage.serde === Some(serde))
 
           assert(hiveTable.tableType === CatalogTableType.EXTERNAL)
-          assert(hiveTable.storage.locationUri === Some(path.toString))
+          assert(hiveTable.storage.locationUri === Some(uri.getPath))
 
           val columns = hiveTable.schema
           assert(columns.map(_.name) === Seq("d1", "d2"))
