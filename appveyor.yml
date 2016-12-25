@@ -25,7 +25,7 @@ environment:
   NOLINT_ON_COMPILE: 0
 
   matrix:
-    - goal: "\"test-only org.apache.spark.sql.hive.HiveMetadataCacheSuite org.apache.spark.sql.hive.MultiDatabaseSuite org.apache.spark.sql.hive.orc.OrcQuerySuite org.apache.spark.sql.hive.orc.OrcHadoopFsRelationSuite org.apache.spark.sql.sources.JsonHadoopFsRelationSuite org.apache.spark.sql.hive.execution.PruneFileSourcePartitionsSuite org.apache.spark.sql.hive.execution.HiveCommandSuite org.apache.spark.sql.hive.HiveExternalCatalogBackwardCompatibilitySuite org.apache.spark.sql.hive.MetastoreDataSourcesSuite org.apache.spark.sql.hive.HiveMetastoreCatalogSuite org.apache.spark.sql.hive.execution.HiveQuerySuite\""
+    - goal: "\"test-only org.apache.spark.repl.ReplSuite\""
       profiles: "-Phive"
 cache:
   - C:\Users\appveyor\.m2

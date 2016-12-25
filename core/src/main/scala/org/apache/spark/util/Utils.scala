@@ -2567,13 +2567,12 @@ private[spark] object Utils extends Logging {
    */
   def getUserJars(conf: SparkConf, isShell: Boolean = false): Seq[String] = {
     val sparkJars = conf.getOption("spark.jars")
-    val jars = if (conf.get("spark.master") == "yarn" && isShell) {
+    if (conf.get("spark.master") == "yarn" && isShell) {
       val yarnJars = conf.getOption("spark.yarn.dist.jars")
       unionFileLists(sparkJars, yarnJars).toSeq
     } else {
       sparkJars.map(_.split(",")).map(_.filter(_.nonEmpty)).toSeq.flatten
     }
-    mutable.LinkedHashSet(jars: _*).toSeq
   }
 
   private[util] val REDACTION_REPLACEMENT_TEXT = "*********(redacted)"
