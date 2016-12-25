@@ -41,6 +41,7 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
     spark.sharedState.externalCatalog.asInstanceOf[HiveExternalCatalog].client
 
   val tempDir = Utils.createTempDir().getCanonicalFile
+  val tempDirUri = tempDir.toURI.toString.stripSuffix("/")
 
   override def beforeEach(): Unit = {
     sql("CREATE DATABASE test_db")
@@ -81,7 +82,7 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
     identifier = TableIdentifier("tbl2", Some("test_db")),
     tableType = CatalogTableType.EXTERNAL,
     storage = CatalogStorageFormat.empty.copy(
-      locationUri = Some(tempDir.toURI.toString),
+      locationUri = Some(tempDirUri),
       inputFormat = Some("org.apache.hadoop.mapred.TextInputFormat"),
       outputFormat = Some("org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat")),
     schema = simpleSchema)
@@ -168,7 +169,7 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
     tableType = CatalogTableType.EXTERNAL,
     storage = CatalogStorageFormat.empty.copy(
       locationUri = Some(defaultTableURI("tbl7").toString + "-__PLACEHOLDER__"),
-      properties = Map("path" -> tempDir.getAbsolutePath)),
+      properties = Map("path" -> tempDirUri)),
     schema = new StructType(),
     properties = Map(
       "spark.sql.sources.provider" -> "json",
@@ -179,8 +180,8 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
     identifier = TableIdentifier("tbl8", Some("test_db")),
     tableType = CatalogTableType.EXTERNAL,
     storage = CatalogStorageFormat.empty.copy(
-      locationUri = Some(tempDir.toURI.toString),
-      properties = Map("path" -> tempDir.getAbsolutePath)),
+      locationUri = Some(tempDirUri),
+      properties = Map("path" -> tempDirUri)),
     schema = simpleSchema,
     properties = Map(
       "spark.sql.sources.provider" -> "parquet",
@@ -192,7 +193,7 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
     tableType = CatalogTableType.EXTERNAL,
     storage = CatalogStorageFormat.empty.copy(
       locationUri = Some(defaultTableURI("tbl9").toString + "-__PLACEHOLDER__"),
-      properties = Map("path" -> tempDir.getAbsolutePath)),
+      properties = Map("path" -> tempDirUri)),
     schema = new StructType(),
     properties = Map("spark.sql.sources.provider" -> "json"))
 
