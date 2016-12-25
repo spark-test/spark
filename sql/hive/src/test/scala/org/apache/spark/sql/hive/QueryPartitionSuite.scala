@@ -71,7 +71,7 @@ class QueryPartitionSuite extends QueryTest with SQLTestUtils with TestHiveSingl
 
   test("SPARK-13709: reading partitioned Avro table with nested schema") {
     withTempDir { dir =>
-      val path = dir.getCanonicalPath
+      val path = dir.toURI.toString
       val tableName = "spark_13709"
       val tempTableName = "spark_13709_temp"
 
