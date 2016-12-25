@@ -216,8 +216,8 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
       if (tbl.tableType == CatalogTableType.EXTERNAL) {
         // trim the URI prefix
         val tableLocation = new URI(readBack.storage.locationUri.get).getPath
-        val expected = tempDir.toURI.getPath.stripSuffix("/")
-        assert(tableLocation == expected, tbl.identifier.table)
+        val expectedLocation = tempDir.toURI.getPath.stripSuffix("/")
+        assert(tableLocation == expectedLocation)
       }
     }
   }
@@ -249,7 +249,7 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
       // trim the URI prefix
       val actualTableLocation = new URI(readBack.storage.locationUri.get).getPath
       val expectedLocation = if (tbl.tableType == CatalogTableType.EXTERNAL) {
-        tempDir.getAbsolutePath
+        tempDir.toURI.getPath.stripSuffix("/")
       } else {
         // trim the URI prefix
         defaultTableURI(newName).getPath
