@@ -167,7 +167,7 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
     identifier = TableIdentifier("tbl7", Some("test_db")),
     tableType = CatalogTableType.EXTERNAL,
     storage = CatalogStorageFormat.empty.copy(
-      locationUri = Some(defaultTableURI("tbl7") + "-__PLACEHOLDER__"),
+      locationUri = Some(defaultTableURI("tbl7").toString + "-__PLACEHOLDER__"),
       properties = Map("path" -> tempDir.getAbsolutePath)),
     schema = new StructType(),
     properties = Map(
@@ -191,7 +191,7 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
     identifier = TableIdentifier("tbl9", Some("test_db")),
     tableType = CatalogTableType.EXTERNAL,
     storage = CatalogStorageFormat.empty.copy(
-      locationUri = Some(defaultTableURI("tbl9") + "-__PLACEHOLDER__"),
+      locationUri = Some(defaultTableURI("tbl9").toString + "-__PLACEHOLDER__"),
       properties = Map("path" -> tempDir.getAbsolutePath)),
     schema = new StructType(),
     properties = Map("spark.sql.sources.provider" -> "json"))
@@ -217,7 +217,7 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
         // trim the URI prefix
         val tableLocation = new URI(readBack.storage.locationUri.get).getPath
         val expected = tempDir.toURI.getPath.stripSuffix("/")
-        assert(tableLocation == expected)
+        assert(tableLocation == expected, tbl.identifier.table)
       }
     }
   }
