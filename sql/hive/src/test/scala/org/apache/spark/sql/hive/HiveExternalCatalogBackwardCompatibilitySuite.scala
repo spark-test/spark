@@ -21,6 +21,8 @@ import java.net.URI
 
 import org.scalatest.BeforeAndAfterEach
 
+import org.apache.hadoop.fs.Path
+
 import org.apache.spark.sql.QueryTest
 import org.apache.spark.sql.catalyst.TableIdentifier
 import org.apache.spark.sql.catalyst.catalog.{CatalogStorageFormat, CatalogTable, CatalogTableType}
@@ -56,10 +58,11 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
     spark.sharedState.externalCatalog.getTable("test_db", tableName)
   }
 
-  private def defaultTablePath(tableName: String): String = {
-    spark.sessionState.catalog.defaultTablePath(TableIdentifier(tableName, Some("test_db")))
+  private def defaultTableURI(tableName: String): URI = {
+    val defaultPath =
+      spark.sessionState.catalog.defaultTablePath(TableIdentifier(tableName, Some("test_db")))
+    new Path(defaultPath).toUri
   }
-
 
   // Raw table metadata that are dumped from tables created by Spark 2.0. Note that, all spark
   // versions prior to 2.1 would generate almost same raw table metadata for a specific table.
@@ -128,7 +131,8 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
   lazy val dataSourceTable = CatalogTable(
     identifier = TableIdentifier("tbl4", Some("test_db")),
     tableType = CatalogTableType.MANAGED,
-    storage = CatalogStorageFormat.empty.copy(properties = Map("path" -> defaultTablePath("tbl4"))),
+    storage = CatalogStorageFormat.empty.copy(
+      properties = Map("path" -> defaultTableURI("tbl4").toString)),
     schema = new StructType(),
     properties = Map(
       "spark.sql.sources.provider" -> "json",
@@ -138,7 +142,8 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
   lazy val hiveCompatibleDataSourceTable = CatalogTable(
     identifier = TableIdentifier("tbl5", Some("test_db")),
     tableType = CatalogTableType.MANAGED,
-    storage = CatalogStorageFormat.empty.copy(properties = Map("path" -> defaultTablePath("tbl5"))),
+    storage = CatalogStorageFormat.empty.copy(
+      properties = Map("path" -> defaultTableURI("tbl5").toString)),
     schema = simpleSchema,
     properties = Map(
       "spark.sql.sources.provider" -> "parquet",
@@ -148,7 +153,8 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
   lazy val partitionedDataSourceTable = CatalogTable(
     identifier = TableIdentifier("tbl6", Some("test_db")),
     tableType = CatalogTableType.MANAGED,
-    storage = CatalogStorageFormat.empty.copy(properties = Map("path" -> defaultTablePath("tbl6"))),
+    storage = CatalogStorageFormat.empty.copy(
+      properties = Map("path" -> defaultTableURI("tbl6").toString)),
     schema = new StructType(),
     properties = Map(
       "spark.sql.sources.provider" -> "json",
@@ -161,7 +167,7 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
     identifier = TableIdentifier("tbl7", Some("test_db")),
     tableType = CatalogTableType.EXTERNAL,
     storage = CatalogStorageFormat.empty.copy(
-      locationUri = Some(defaultTablePath("tbl7") + "-__PLACEHOLDER__"),
+      locationUri = Some(defaultTableURI("tbl7") + "-__PLACEHOLDER__"),
       properties = Map("path" -> tempDir.getAbsolutePath)),
     schema = new StructType(),
     properties = Map(
@@ -185,7 +191,7 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
     identifier = TableIdentifier("tbl9", Some("test_db")),
     tableType = CatalogTableType.EXTERNAL,
     storage = CatalogStorageFormat.empty.copy(
-      locationUri = Some(defaultTablePath("tbl9") + "-__PLACEHOLDER__"),
+      locationUri = Some(defaultTableURI("tbl9") + "-__PLACEHOLDER__"),
       properties = Map("path" -> tempDir.getAbsolutePath)),
     schema = new StructType(),
     properties = Map("spark.sql.sources.provider" -> "json"))
@@ -246,7 +252,7 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
         tempDir.getAbsolutePath
       } else {
         // trim the URI prefix
-        new URI(defaultTablePath(newName)).getPath
+        defaultTableURI(newName).getPath
       }
       assert(actualTableLocation == expectedLocation)
     }
