@@ -1298,7 +1298,7 @@ class SQLQuerySuite extends QueryTest with SQLTestUtils with TestHiveSingleton {
         .save(path)
 
       // We don't support creating a temporary table while specifying a database
-      val message = intercept[AnalysisException] {
+      intercept[AnalysisException] {
         spark.sql(
           s"""
           |CREATE TEMPORARY TABLE db.t
@@ -1307,7 +1307,7 @@ class SQLQuerySuite extends QueryTest with SQLTestUtils with TestHiveSingleton {
           |  path '$path'
           |)
         """.stripMargin)
-      }.getMessage
+      }
 
       // If you use backticks to quote the name then it's OK.
       spark.sql(

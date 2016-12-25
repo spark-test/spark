@@ -156,7 +156,7 @@ class DataSourceWithHiveMetastoreCatalogSuite
     test(s"Persist non-partitioned $provider relation into metastore as managed table using CTAS") {
       withTempPath { dir =>
         withTable("t") {
-          val path = dir.getCanonicalPath
+          val path = dir.toURI.toString
 
           sql(
             s"""CREATE TABLE t USING $provider
