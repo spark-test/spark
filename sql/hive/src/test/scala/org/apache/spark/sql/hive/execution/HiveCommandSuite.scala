@@ -202,12 +202,12 @@ class HiveCommandSuite extends QueryTest with SQLTestUtils with TestHiveSingleto
 
       // LOAD DATA INTO non-partitioned table can't specify partition
       intercept[AnalysisException] {
-        val testPath = testData.toURI.getPath
+        val testPath = testData.toURI.toString
         sql(s"""$loadQuery INPATH "$testPath" INTO TABLE non_part_table PARTITION(ds="1")""")
       }
 
       withInputFile { path =>
-        sql(s"""$loadQuery INPATH "${path.toURI.getPath}" INTO TABLE non_part_table""")
+        sql(s"""$loadQuery INPATH "${path.toURI.toString}" INTO TABLE non_part_table""")
 
         // Non-local mode is expected to move the file, while local mode is expected to copy it.
         // Check once here that the behavior is the expected.
@@ -260,26 +260,26 @@ class HiveCommandSuite extends QueryTest with SQLTestUtils with TestHiveSingleto
       // LOAD DATA INTO partitioned table must specify partition
       withInputFile { f =>
         intercept[AnalysisException] {
-          val path = f.toURI.getPath
+          val path = f.toURI.toString
           sql(s"""$loadQuery INPATH "$path" INTO TABLE part_table""")
         }
 
         intercept[AnalysisException] {
-          val path = f.toURI.getPath
+          val path = f.toURI.toString
           sql(s"""$loadQuery INPATH "$path" INTO TABLE part_table PARTITION(c="1")""")
         }
         intercept[AnalysisException] {
-          val path = f.toURI.getPath
+          val path = f.toURI.toString
           sql(s"""$loadQuery INPATH "$path" INTO TABLE part_table PARTITION(d="1")""")
         }
         intercept[AnalysisException] {
-          val path = f.toURI.getPath
+          val path = f.toURI.toString
           sql(s"""$loadQuery INPATH "$path" INTO TABLE part_table PARTITION(c="1", k="2")""")
         }
       }
 
       withInputFile { f =>
-        val path = f.toURI.getPath
+        val path = f.toURI.toString
         sql(s"""$loadQuery INPATH "$path" INTO TABLE part_table PARTITION(c="1", d="2")""")
       }
       checkAnswer(
@@ -288,7 +288,7 @@ class HiveCommandSuite extends QueryTest with SQLTestUtils with TestHiveSingleto
 
       // Different order of partition columns.
       withInputFile { f =>
-        val path = f.toURI.getPath
+        val path = f.toURI.toString
         sql(s"""$loadQuery INPATH "$path" INTO TABLE part_table PARTITION(d="1", c="2")""")
       }
       checkAnswer(

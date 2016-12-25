@@ -78,7 +78,7 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
     identifier = TableIdentifier("tbl2", Some("test_db")),
     tableType = CatalogTableType.EXTERNAL,
     storage = CatalogStorageFormat.empty.copy(
-      locationUri = Some(tempDir.getAbsolutePath),
+      locationUri = Some(tempDir.toURI.toString),
       inputFormat = Some("org.apache.hadoop.mapred.TextInputFormat"),
       outputFormat = Some("org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat")),
     schema = simpleSchema)
@@ -173,7 +173,7 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
     identifier = TableIdentifier("tbl8", Some("test_db")),
     tableType = CatalogTableType.EXTERNAL,
     storage = CatalogStorageFormat.empty.copy(
-      locationUri = Some(tempDir.getAbsolutePath),
+      locationUri = Some(tempDir.toURI.toString),
       properties = Map("path" -> tempDir.getAbsolutePath)),
     schema = simpleSchema,
     properties = Map(
@@ -219,13 +219,15 @@ class HiveExternalCatalogBackwardCompatibilitySuite extends QueryTest
   test("make sure we can alter table location created by old version of Spark") {
     withTempDir { dir =>
       for ((tbl, _) <- rawTablesAndExpectations if tbl.tableType == CatalogTableType.EXTERNAL) {
-        sql(s"ALTER TABLE ${tbl.identifier} SET LOCATION '${dir.getAbsolutePath}'")
+        val path = dir.toURI.toString.stripSuffix("/")
+        sql(s"ALTER TABLE ${tbl.identifier} SET LOCATION '$path'")
 
         val readBack = getTableMetadata(tbl.identifier.table)
 
         // trim the URI prefix
         val actualTableLocation = new URI(readBack.storage.locationUri.get).getPath
-        assert(actualTableLocation == dir.getAbsolutePath)
+        val expected = dir.toURI.getPath.stripSuffix("/")
+        assert(actualTableLocation == expected)
       }
     }
   }

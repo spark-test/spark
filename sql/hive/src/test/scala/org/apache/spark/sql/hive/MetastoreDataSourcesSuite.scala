@@ -291,7 +291,7 @@ class MetastoreDataSourcesSuite extends QueryTest with SQLTestUtils with TestHiv
           s"""CREATE TABLE ctasJsonTable
              |USING org.apache.spark.sql.json.DefaultSource
              |OPTIONS (
-             |  path '$tempPath'
+             |  path '${tempPath.toURI.toString}'
              |) AS
              |SELECT * FROM jsonTable
            """.stripMargin)
@@ -1049,7 +1049,7 @@ class MetastoreDataSourcesSuite extends QueryTest with SQLTestUtils with TestHiv
   test("CTAS: persisted partitioned data source table") {
     withTempPath { dir =>
       withTable("t") {
-        val path = dir.getCanonicalPath
+        val path = dir.toURI.toString
 
         sql(
           s"""CREATE TABLE t USING PARQUET
