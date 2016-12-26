@@ -26,10 +26,8 @@ import org.apache.spark.sql.catalyst.TableIdentifier
 import org.apache.spark.sql.catalyst.analysis.NoSuchTableException
 import org.apache.spark.sql.catalyst.catalog.{CatalogStorageFormat, CatalogTable, CatalogTableType}
 import org.apache.spark.sql.hive.test.TestHiveSingleton
-import org.apache.spark.sql.internal.SQLConf
 import org.apache.spark.sql.test.SQLTestUtils
 import org.apache.spark.sql.types.StructType
-import org.apache.spark.util.Utils
 
 class HiveCommandSuite extends QueryTest with SQLTestUtils with TestHiveSingleton {
   import testImplicits._
@@ -223,8 +221,8 @@ class HiveCommandSuite extends QueryTest with SQLTestUtils with TestHiveSingleto
       // file://path/to/data/files/employee.dat
       //
       // TODO: need a similar test for non-local mode.
-      if (local && !Utils.isWindows) {
-        val incorrectUri = "file:/" + testData.getAbsolutePath()
+      if (local) {
+        val incorrectUri = "file://path/to/data/files/employee.dat"
         intercept[AnalysisException] {
           sql(s"""LOAD DATA LOCAL INPATH "$incorrectUri" INTO TABLE non_part_table""")
         }
