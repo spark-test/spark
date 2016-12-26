@@ -18,6 +18,7 @@
 package org.apache.spark.sql.streaming.test
 
 import java.io.File
+import java.net.URI
 import java.util.concurrent.TimeUnit
 
 import scala.concurrent.duration._
@@ -535,7 +536,7 @@ class DataStreamReaderWriterSuite extends StreamTest with BeforeAndAfter with Pr
 
   test("MemorySink can recover from a checkpoint in Complete Mode") {
     val checkpointLoc = newMetadataDir
-    val checkpointDir = new File(checkpointLoc, "offsets")
+    val checkpointDir = new File(new URI(s"$checkpointLoc/offsets"))
     checkpointDir.mkdirs()
     assert(checkpointDir.exists())
     testMemorySinkCheckpointRecovery(checkpointLoc, provideInWriter = true)
@@ -543,7 +544,7 @@ class DataStreamReaderWriterSuite extends StreamTest with BeforeAndAfter with Pr
 
   test("SPARK-18927: MemorySink can recover from a checkpoint provided in conf in Complete Mode") {
     val checkpointLoc = newMetadataDir
-    val checkpointDir = new File(checkpointLoc, "offsets")
+    val checkpointDir = new File(new URI(s"$checkpointLoc/offsets"))
     checkpointDir.mkdirs()
     assert(checkpointDir.exists())
     withSQLConf(SQLConf.CHECKPOINT_LOCATION.key -> checkpointLoc) {
@@ -556,7 +557,7 @@ class DataStreamReaderWriterSuite extends StreamTest with BeforeAndAfter with Pr
     val ms = new MemoryStream[Int](0, sqlContext)
     val df = ms.toDF().toDF("a")
     val checkpointLoc = newMetadataDir
-    val checkpointDir = new File(checkpointLoc, "offsets")
+    val checkpointDir = new File(new URI(s"$checkpointLoc/offsets"))
     checkpointDir.mkdirs()
     assert(checkpointDir.exists())
 
