@@ -30,6 +30,9 @@ import org.apache.spark.sql.streaming.StreamingQueryStatusAndProgressSuite._
 
 
 class StreamingQueryStatusAndProgressSuite extends StreamTest {
+  implicit class StringToOsSafeNewlines(str: String) {
+    def osSafeNewlines: String = str.stripMargin.replaceAll("\r\n|\r|\n", System.lineSeparator)
+  }
 
   test("StreamingQueryProgress - prettyJson") {
     val json1 = testProgress1.prettyJson
@@ -66,7 +69,7 @@ class StreamingQueryStatusAndProgressSuite extends StreamTest {
         |    "description" : "sink"
         |  }
         |}
-      """.stripMargin.trim)
+      """.stripMargin.trim.osSafeNewlines)
     assert(compact(parse(json1)) === testProgress1.json)
 
     val json2 = testProgress2.prettyJson
@@ -96,7 +99,7 @@ class StreamingQueryStatusAndProgressSuite extends StreamTest {
          |    "description" : "sink"
          |  }
          |}
-      """.stripMargin.trim)
+      """.stripMargin.trim.osSafeNewlines)
     assert(compact(parse(json2)) === testProgress2.json)
   }
 
@@ -119,7 +122,7 @@ class StreamingQueryStatusAndProgressSuite extends StreamTest {
         |  "isDataAvailable" : true,
         |  "isTriggerActive" : false
         |}
-      """.stripMargin.trim)
+      """.stripMargin.trim.osSafeNewlines)
   }
 
   test("StreamingQueryStatus - json") {
