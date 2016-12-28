@@ -25,7 +25,7 @@ environment:
   NOLINT_ON_COMPILE: 0
 
   matrix:
-    - goal: "\"test-only org.apache.spark.sql.streaming.StreamingQueryStatusAndProgressSuite\""
+    - goal: "\"test-only org.apache.spark.sql.streaming.test.DataStreamReaderWriterSuite\""
       profiles: "-Phive"
 cache:
   - C:\Users\appveyor\.m2

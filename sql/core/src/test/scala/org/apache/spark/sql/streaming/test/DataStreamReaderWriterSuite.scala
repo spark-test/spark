@@ -374,14 +374,14 @@ class DataStreamReaderWriterSuite extends StreamTest with BeforeAndAfter with Pr
 
     verify(LastOptions.mockStreamSourceProvider).createSource(
       spark.sqlContext,
-      checkpointLocation + "/sources/0",
+      new File(checkpointLocation, "/sources/0").getCanonicalPath,
       None,
       "org.apache.spark.sql.streaming.test",
       Map.empty)
 
     verify(LastOptions.mockStreamSourceProvider).createSource(
       spark.sqlContext,
-      checkpointLocation + "/sources/1",
+      new File(checkpointLocation, "/sources/1").getCanonicalPath,
       None,
       "org.apache.spark.sql.streaming.test",
       Map.empty)
