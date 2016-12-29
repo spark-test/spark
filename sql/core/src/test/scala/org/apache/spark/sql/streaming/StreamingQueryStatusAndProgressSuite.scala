@@ -30,13 +30,16 @@ import org.apache.spark.sql.streaming.StreamingQueryStatusAndProgressSuite._
 
 
 class StreamingQueryStatusAndProgressSuite extends StreamTest {
-  implicit class StringToOsSafeNewlines(str: String) {
-    def osSafeNewlines: String = str.stripMargin.replaceAll("\r\n|\r|\n", System.lineSeparator)
+  implicit class EqualsIgnoreNewlines(source: String) {
+    def equalsIgnoreCRLF(target: String): Boolean = {
+      source.stripMargin.replaceAll("\r\n|\r|\n", System.lineSeparator) ===
+        target.stripMargin.replaceAll("\r\n|\r|\n", System.lineSeparator)
+    }
   }
 
   test("StreamingQueryProgress - prettyJson") {
     val json1 = testProgress1.prettyJson
-    assert(json1 ===
+    assert(json1.equalsIgnoreCRLF(
       s"""
         |{
         |  "id" : "${testProgress1.id.toString}",
@@ -69,12 +72,12 @@ class StreamingQueryStatusAndProgressSuite extends StreamTest {
         |    "description" : "sink"
         |  }
         |}
-      """.stripMargin.trim.osSafeNewlines)
+      """.stripMargin.trim))
     assert(compact(parse(json1)) === testProgress1.json)
 
     val json2 = testProgress2.prettyJson
     assert(
-      json2 ===
+      json2.equalsIgnoreCRLF(
         s"""
          |{
          |  "id" : "${testProgress2.id.toString}",
@@ -99,7 +102,7 @@ class StreamingQueryStatusAndProgressSuite extends StreamTest {
          |    "description" : "sink"
          |  }
          |}
-      """.stripMargin.trim.osSafeNewlines)
+      """.stripMargin.trim))
     assert(compact(parse(json2)) === testProgress2.json)
   }
 
@@ -115,14 +118,14 @@ class StreamingQueryStatusAndProgressSuite extends StreamTest {
 
   test("StreamingQueryStatus - prettyJson") {
     val json = testStatus.prettyJson
-    assert(json ===
+    assert(json.equalsIgnoreCRLF(
       """
         |{
         |  "message" : "active",
         |  "isDataAvailable" : true,
         |  "isTriggerActive" : false
         |}
-      """.stripMargin.trim.osSafeNewlines)
+      """.stripMargin.trim))
   }
 
   test("StreamingQueryStatus - json") {
@@ -222,4 +225,3 @@ object StreamingQueryStatusAndProgressSuite {
 
   val testStatus = new StreamingQueryStatus("active", true, false)
 }
-
