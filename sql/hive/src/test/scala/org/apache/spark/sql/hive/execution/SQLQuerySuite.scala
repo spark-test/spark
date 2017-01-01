@@ -1953,7 +1953,8 @@ class SQLQuerySuite extends QueryTest with SQLTestUtils with TestHiveSingleton {
 
   test("SPARK-17796 Support wildcard character in filename for LOAD DATA LOCAL INPATH") {
     withTempDir { dir =>
-      val path = dir.toURI.toString.stripSuffix("/")
+      val uri = dir.toURI.toString.stripSuffix("/")
+      val path = dir.toURI.getPath.stripSuffix("/")
       for (i <- 1 to 3) {
         Files.write(s"$i", new File(s"$path/part-r-0000$i"), StandardCharsets.UTF_8)
       }
@@ -1963,7 +1964,7 @@ class SQLQuerySuite extends QueryTest with SQLTestUtils with TestHiveSingleton {
 
       withTable("load_t") {
         sql("CREATE TABLE load_t (a STRING)")
-        sql(s"LOAD DATA LOCAL INPATH '$path/*part-r*' INTO TABLE load_t")
+        sql(s"LOAD DATA LOCAL INPATH '$uri/*part-r*' INTO TABLE load_t")
         checkAnswer(sql("SELECT * FROM load_t"), Seq(Row("1"), Row("2"), Row("3")))
 
         val m = intercept[AnalysisException] {
@@ -1972,7 +1973,7 @@ class SQLQuerySuite extends QueryTest with SQLTestUtils with TestHiveSingleton {
         assert(m.contains("LOAD DATA input path does not exist"))
 
         val m2 = intercept[AnalysisException] {
-          sql(s"LOAD DATA LOCAL INPATH '$path*/*part*' INTO TABLE load_t")
+          sql(s"LOAD DATA LOCAL INPATH '$uri*/*part*' INTO TABLE load_t")
         }.getMessage
         assert(m2.contains("LOAD DATA input path allows only filename wildcard"))
       }
