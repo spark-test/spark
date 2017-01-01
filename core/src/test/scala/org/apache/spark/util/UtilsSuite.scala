@@ -296,10 +296,10 @@ class UtilsSuite extends SparkFunSuite with ResetSystemProperties with Logging {
     Utils.tryWithSafeFinally {
       IOUtils.write(content, outputStream)
     } {
+      outputStream.close()
       if (fout != null) {
         fout.close()
       }
-      outputStream.close()
     }
   }
 
