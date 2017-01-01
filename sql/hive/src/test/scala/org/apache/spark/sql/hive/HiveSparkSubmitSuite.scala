@@ -340,9 +340,9 @@ class HiveSparkSubmitSuite
     val sparkHome = sys.props.getOrElse("spark.test.home", fail("spark.test.home is not set!"))
     val history = ArrayBuffer.empty[String]
     val sparkSubmit = if (Utils.isWindows) {
-      ".\\bin\\spark-submit.cmd"
+      new File("..\\..\\bin\\spark-submit.cmd").getAbsolutePath
     } else {
-      "./bin/spark-submit"
+      new File("../../bin/spark-submit").getAbsolutePath
     }
     val commands = Seq(sparkSubmit) ++ args
     val commandLine = commands.mkString("'", "' '", "'")
