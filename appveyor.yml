@@ -25,7 +25,7 @@ environment:
   NOLINT_ON_COMPILE: 0
 
   matrix:
-    - goal: "\"test-only org.apache.spark.sql.hive.PartitionProviderCompatibilitySuite org.apache.spark.util.UtilsSuite\""
+    - goal: "\"test-only org.apache.spark.sql.hive.PartitionProviderCompatibilitySuite org.apache.spark.sql.hive.StatisticsSuite org.apache.spark.sql.hive.execution.SQLQuerySuite org.apache.spark.sql.hive.execution.HiveDDLSuite org.apache.spark.sql.hive.ShowCreateTableSuite org.apache.spark.sql.hive.PartitionedTablePerfStatsSuite org.apache.spark.sql.hive.HiveSparkSubmitSuite org.apache.spark.util.UtilsSuite\""
       profiles: "-Phive"
 cache:
   - C:\Users\appveyor\.m2

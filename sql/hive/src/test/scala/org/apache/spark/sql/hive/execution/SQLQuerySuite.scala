@@ -126,7 +126,7 @@ class SQLQuerySuite extends QueryTest with SQLTestUtils with TestHiveSingleton {
         s"""
           |CREATE FUNCTION udtf_count_temp
           |AS 'org.apache.spark.sql.hive.execution.GenericUDTFCount2'
-          |USING JAR '${hiveContext.getHiveFile("TestUDTF.jar").getCanonicalPath()}'
+          |USING JAR '${hiveContext.getHiveFile("TestUDTF.jar").toURI}'
         """.stripMargin)
 
       checkAnswer(
@@ -321,7 +321,7 @@ class SQLQuerySuite extends QueryTest with SQLTestUtils with TestHiveSingleton {
         s"""
            |CREATE FUNCTION udtf_count
            |AS 'org.apache.spark.sql.hive.execution.GenericUDTFCount2'
-           |USING JAR '${hiveContext.getHiveFile("TestUDTF.jar").getCanonicalPath()}'
+           |USING JAR '${hiveContext.getHiveFile("TestUDTF.jar").toURI}'
         """.stripMargin)
 
       checkKeywordsExist(sql("describe function udtf_count"),
@@ -644,7 +644,7 @@ class SQLQuerySuite extends QueryTest with SQLTestUtils with TestHiveSingleton {
       withTempDir { dir =>
         val defaultDataSource = sessionState.conf.defaultDataSourceName
 
-        val tempLocation = dir.getCanonicalPath
+        val tempLocation = dir.toURI.getPath
         sql(s"CREATE TABLE ctas1 LOCATION 'file:$tempLocation/c1'" +
           " AS SELECT key k, value FROM src ORDER BY k, value")
         checkRelation("ctas1", true, defaultDataSource, Some(s"file:$tempLocation/c1"))
