@@ -239,7 +239,7 @@ class PartitionProviderCompatibilitySuite
           // custom locations sanity check
           spark.sql(s"""
             |alter table test partition (A=0, B='%')
-            |set location '${dir.toURI}'""".stripMargin)
+            |set location '${dir.getAbsolutePath}'""".stripMargin)
           assert(spark.sql("select * from test").count() == 28)  // moved to empty dir
 
           // rename partition sanity check

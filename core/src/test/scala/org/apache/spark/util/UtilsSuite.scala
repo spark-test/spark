@@ -285,10 +285,8 @@ class UtilsSuite extends SparkFunSuite with ResetSystemProperties with Logging {
   }
 
   def writeLogFile(path: String, content: Array[Byte]): Unit = {
-    var fout: FileOutputStream = null
     val outputStream = if (path.endsWith(".gz")) {
-      fout = new FileOutputStream(path)
-      new GZIPOutputStream(fout)
+      new GZIPOutputStream(new FileOutputStream(path))
     } else {
       new FileOutputStream(path)
     }
@@ -297,9 +295,6 @@ class UtilsSuite extends SparkFunSuite with ResetSystemProperties with Logging {
       IOUtils.write(content, outputStream)
     } {
       outputStream.close()
-      if (fout != null) {
-        fout.close()
-      }
     }
   }
 
