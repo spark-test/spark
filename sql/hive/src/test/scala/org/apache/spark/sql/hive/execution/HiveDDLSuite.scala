@@ -626,7 +626,7 @@ class HiveDDLSuite
       }
       sql(s"CREATE DATABASE $dbName Location '${tmpDir.toURI}'")
       val db1 = catalog.getDatabaseMetadata(dbName)
-      val dbPath = "file:" + tmpDir
+      val dbPath = "file:" + tmpDir.toURI
       assert(db1 == CatalogDatabase(
         dbName,
         "",
@@ -659,10 +659,6 @@ class HiveDDLSuite
     }
   }
 
-  private def appendTrailingSlash(path: String): String = {
-    if (!path.endsWith(File.separator)) path + File.separator else path
-  }
-
   private def dropDatabase(cascade: Boolean, tableExists: Boolean): Unit = {
     val dbName = "db1"
     val dbPath = new Path(spark.sessionState.conf.warehousePath)
@@ -670,7 +666,7 @@ class HiveDDLSuite
 
     sql(s"CREATE DATABASE $dbName")
     val catalog = spark.sessionState.catalog
-    val expectedDBLocation = "file:" + appendTrailingSlash(dbPath.toUri.getPath) + s"$dbName.db"
+    val expectedDBLocation = s"file:${dbPath.toUri.getPath.stripSuffix("/")}/$dbName.db"
     val db1 = catalog.getDatabaseMetadata(dbName)
     assert(db1 == CatalogDatabase(
       dbName,

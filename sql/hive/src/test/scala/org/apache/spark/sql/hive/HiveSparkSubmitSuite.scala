@@ -347,7 +347,7 @@ class HiveSparkSubmitSuite
     val commands = Seq(sparkSubmit) ++ args
     val commandLine = commands.mkString("'", "' '", "'")
 
-    val builder = new ProcessBuilder(commands: _*).directory(new File(sparkHome))
+    val builder = new ProcessBuilder(commands: _*)
     val env = builder.environment()
     env.put("SPARK_TESTING", "1")
     env.put("SPARK_HOME", sparkHome)
