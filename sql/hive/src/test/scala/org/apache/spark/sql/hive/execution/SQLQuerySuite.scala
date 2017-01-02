@@ -1953,12 +1953,12 @@ class SQLQuerySuite extends QueryTest with SQLTestUtils with TestHiveSingleton {
 
   test("SPARK-17796 Support wildcard character in filename for LOAD DATA LOCAL INPATH") {
     withTempDir { dir =>
-      val path = dir.getPath.toString.stripPrefix("/").stripSuffix("/")
+      val path = dir.toURI.toString.stripSuffix("/")
       for (i <- 1 to 3) {
-        Files.write(s"$i", new File(s"$path/part-r-0000$i"), StandardCharsets.UTF_8)
+        Files.write(s"$i", new File(s"${dir.getAbsoluteFile}/part-r-0000$i"), StandardCharsets.UTF_8)
       }
       for (i <- 5 to 7) {
-        Files.write(s"$i", new File(s"$path/part-s-0000$i"), StandardCharsets.UTF_8)
+        Files.write(s"$i", new File(s"${dir.getAbsoluteFile}/part-s-0000$i"), StandardCharsets.UTF_8)
       }
 
       withTable("load_t") {
