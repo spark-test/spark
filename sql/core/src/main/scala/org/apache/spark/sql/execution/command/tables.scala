@@ -19,7 +19,7 @@ package org.apache.spark.sql.execution.command
 
 import java.io.File
 import java.net.URI
-import java.nio.file.FileSystems
+import java.nio.file.{Paths, FileSystems}
 import java.util.Date
 
 import scala.collection.mutable.ArrayBuffer
@@ -222,16 +222,16 @@ case class LoadDataCommand(
     val loadPath =
       if (isLocal) {
         val uri = Utils.resolveURI(path)
-        val filePath = new File(uri.getPath).getAbsolutePath
-        val exists = if (filePath.contains("*")) {
+        val f = new File(uri.getPath)
+        val exists = if (f.getAbsolutePath.contains("*")) {
           val fileSystem = FileSystems.getDefault
-          val pathPattern = fileSystem.getPath(filePath)
-          val dir = pathPattern.getParent.toString
+          val dir = f.getParentFile.getAbsolutePath
           if (dir.contains("*")) {
             throw new AnalysisException(
               s"LOAD DATA input path allows only filename wildcard: $path")
           }
 
+          val pathPattern = Paths.get(dir, f.getName)
           val files = new File(dir).listFiles()
           if (files == null) {
             false
@@ -240,7 +240,7 @@ case class LoadDataCommand(
             files.exists(f => matcher.matches(fileSystem.getPath(f.getAbsolutePath)))
           }
         } else {
-          new File(filePath).exists()
+          new File(f.getAbsolutePath).exists()
         }
         if (!exists) {
           throw new AnalysisException(s"LOAD DATA input path does not exist: $path")
