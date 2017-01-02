@@ -361,7 +361,6 @@ class DirectKafkaStreamSuite
     // This is ensure all the data is eventually receiving only once
     stateStream.foreachRDD { (rdd: RDD[(String, Int)]) =>
       rdd.collect().headOption.foreach { x =>
-        print(x)
         DirectKafkaStreamSuite.total.set(x._2)
       }
     }
@@ -373,8 +372,7 @@ class DirectKafkaStreamSuite
       sendData(i)
     }
 
-    eventually(timeout(10 seconds), interval(50 milliseconds)) {
-      println(DirectKafkaStreamSuite.total.get)
+    eventually(timeout(20 seconds), interval(50 milliseconds)) {
       assert(DirectKafkaStreamSuite.total.get === (1 to 10).sum)
     }
 
@@ -413,7 +411,7 @@ class DirectKafkaStreamSuite
       sendData(i)
     }
 
-    eventually(timeout(10 seconds), interval(50 milliseconds)) {
+    eventually(timeout(20 seconds), interval(50 milliseconds)) {
       assert(DirectKafkaStreamSuite.total.get === (1 to 20).sum)
     }
     ssc.stop()
