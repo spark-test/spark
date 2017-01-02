@@ -20,37 +20,51 @@ shallow_clone: true
 platform: x64
 configuration: Debug
 
-branches:
-  only:
-    - master
+environment:
+  # Disable lint
+  NOLINT_ON_COMPILE: 0
 
-only_commits:
-  files:
-    - R/
-
+  matrix:
+    - goal: "core/test catalyst/test sql/test"
+      profiles: ""
+    - goal: "hive/test"
+      profiles: "-Phive -Phive-thriftserver"
+    - goal: "sql-kafka-0-10/test sketch/test graphx/test"
+      profiles: ""
+    - goal: "streaming/test streaming-kafka-0-8/test streaming-kafka-0-10/test streaming-flume-sink/test streaming-flume/test"
+      profiles: ""
+    - goal: "mllib-local/test mllib/test examples/test repl/test"
+      profiles: ""
+    - goal: "network-common/test network-shuffle/test launcher/test unsafe/test"
+      profiles: ""
 cache:
   - C:\Users\appveyor\.m2
 
 install:
   # Install maven and dependencies
   - ps: .\dev\appveyor-install-dependencies.ps1
-  # Required package for R unit tests
-  - cmd: R -e "install.packages('testthat', repos='http://cran.us.r-project.org')"
-  - cmd: R -e "packageVersion('testthat')"
-  - cmd: R -e "install.packages('e1071', repos='http://cran.us.r-project.org')"
-  - cmd: R -e "packageVersion('e1071')"
-  - cmd: R -e "install.packages('survival', repos='http://cran.us.r-project.org')"
-  - cmd: R -e "packageVersion('survival')"
+  # Install sbt to run individual tests
+  - ps: |
+      Add-Type -AssemblyName System.IO.Compression.FileSystem
+      if (!(Test-Path -Path "C:\sbt" )) {
+        (new-object System.Net.WebClient).DownloadFile(
+          'https://dl.bintray.com/sbt/native-packages/sbt/0.13.7/sbt-0.13.7.zip',
+          'C:\sbt-bin.zip'
+        )
+        [System.IO.Compression.ZipFile]::ExtractToDirectory("C:\sbt-bin.zip", "C:\sbt")
+      }
+  - cmd: SET PATH=C:\sbt\sbt\bin;%JAVA_HOME%\bin;%PATH%
+  - cmd: SET SBT_OPTS=-XX:MaxPermSize=2g -Xmx4g
 
 build_script:
-  - cmd: mvn -DskipTests -Phadoop-2.6 -Psparkr -Phive -Phive-thriftserver package
-
-test_script:
-  - cmd: .\bin\spark-submit2.cmd --conf spark.hadoop.fs.default.name="file:///" R\pkg\tests\run-all.R
+  - cmd: sbt -Phadoop-2.6 %profiles% package
 
 notifications:
   - provider: Email
     on_build_success: false
     on_build_failure: false
     on_build_status_changed: false
+
+test_script:
+  - cmd: sbt -Phadoop-2.6 %profiles% %goal%
 
