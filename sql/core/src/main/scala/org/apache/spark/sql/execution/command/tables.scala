@@ -19,13 +19,14 @@ package org.apache.spark.sql.execution.command
 
 import java.io.File
 import java.net.URI
-import java.nio.file.{Paths, FileSystems}
+import java.nio.file.FileSystems
 import java.util.Date
 
 import scala.collection.mutable.ArrayBuffer
 import scala.util.control.NonFatal
 import scala.util.Try
 
+import org.apache.commons.lang3.StringEscapeUtils
 import org.apache.hadoop.fs.Path
 
 import org.apache.spark.sql.{AnalysisException, Row, SparkSession}
@@ -231,18 +232,21 @@ case class LoadDataCommand(
               s"LOAD DATA input path allows only filename wildcard: $path")
           }
 
-          // `dir` is known as a directory above. So, it always has the trailing "/ in URI path.
-          val pathPattern = if (Utils.isWindows) {
-            // On Windows, the vaild pattern should start with "C:/" not "/C:/"
-            fileSystem.getPath(dir).toUri.getPath.stripPrefix("/") + file.getName
+          // Note that special characters such as "*" on Windows are not allowed as a path.
+          // So, we just concatenate both the name and dir below via `java.io.File`.
+          val dirPath = fileSystem.getPath(dir)
+          val pathPattern = new File(dirPath.toAbsolutePath.toString, file.getName).getAbsolutePath
+          val safePathPattern = if (Utils.isWindows) {
+            // On Windows, back-slashs in the pattern should be escaped.
+            StringEscapeUtils.escapeEcmaScript(pathPattern)
           } else {
-            fileSystem.getPath(dir).toUri.getPath + file.getName
+            pathPattern
           }
           val files = new File(dir).listFiles()
           if (files == null) {
             false
           } else {
-            val matcher = fileSystem.getPathMatcher("glob:" + pathPattern)
+            val matcher = fileSystem.getPathMatcher("glob:" + safePathPattern)
             files.exists(f => matcher.matches(fileSystem.getPath(f.getAbsolutePath)))
           }
         } else {
