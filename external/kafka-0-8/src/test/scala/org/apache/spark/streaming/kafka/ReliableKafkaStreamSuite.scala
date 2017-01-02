@@ -65,7 +65,10 @@ class ReliableKafkaStreamSuite extends SparkFunSuite
   }
 
   override def afterAll(): Unit = {
-    ssc.sc.stop()
+    if (ssc != null) {
+      ssc.sc.stop()
+      ssc = null
+    }
     Utils.deleteRecursively(tempDirectory)
 
     if (kafkaTestUtils != null) {
@@ -82,7 +85,6 @@ class ReliableKafkaStreamSuite extends SparkFunSuite
   after {
     if (ssc != null) {
       ssc.stop()
-      ssc = null
     }
   }
 
