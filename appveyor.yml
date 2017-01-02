@@ -27,8 +27,6 @@ environment:
   matrix:
     - goal: "\"test-only org.apache.spark.streaming.kafka.KafkaRDDSuite org.apache.spark.streaming.kafka.DirectKafkaStreamSuite org.apache.spark.streaming.kafka.ReliableKafkaStreamSuite org.apache.spark.streaming.kafka.KafkaStreamSuite org.apache.spark.streaming.kafka.KafkaClusterSuite org.apache.spark.streaming.kafka010.DirectKafkaStreamSuite org.apache.spark.streaming.kafka010.KafkaRDDSuite\""
       profiles: ""
-    - goal: "\"test-only org.apache.spark.sql.hive.StatisticsSuite org.apache.spark.sql.hive.execution.SQLQuerySuite\""
-      profiles: "-Phive"
 cache:
   - C:\Users\appveyor\.m2
 
