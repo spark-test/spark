@@ -231,18 +231,19 @@ case class LoadDataCommand(
               s"LOAD DATA input path allows only filename wildcard: $path")
           }
 
-          val pathPattern = s"${fileSystem.getPath(dir).toUri.getPath}/${file.getName}"
+          // `dir` is known as a directory above. So, it always has the trailing "/ in URI path.
+          val pathPattern = if (Utils.isWindows) {
+            // On Windows, the vaild pattern should start with "C:/" not "/C:/"
+            fileSystem.getPath(dir).toUri.getPath.stripPrefix("/") + file.getName
+          } else {
+            fileSystem.getPath(dir).toUri.getPath + file.getName
+          }
           val files = new File(dir).listFiles()
           if (files == null) {
             false
           } else {
             val matcher = fileSystem.getPathMatcher("glob:" + pathPattern)
-            println(pathPattern)
-            files.exists { f =>
-              val a = fileSystem.getPath(f.getAbsolutePath)
-              println(a)
-              matcher.matches(a)
-            }
+            files.exists(f => matcher.matches(fileSystem.getPath(f.getAbsolutePath)))
           }
         } else {
           new File(file.getAbsolutePath).exists()
