@@ -138,7 +138,6 @@ private[kafka] class KafkaTestUtils extends Logging {
 
     if (server != null) {
       server.shutdown()
-      server.awaitShutdown()
       server = null
     }
 

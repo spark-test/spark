@@ -237,8 +237,8 @@ case class LoadDataCommand(
           val dirPath = fileSystem.getPath(dir)
           val pathPattern = new File(dirPath.toAbsolutePath.toString, file.getName).getAbsolutePath
           val safePathPattern = if (Utils.isWindows) {
-            // On Windows, back-slashs in the pattern should be escaped.
-            StringEscapeUtils.escapeEcmaScript(pathPattern)
+            // On Windows, back-slashes in the pattern should be escaped.
+            StringEscapeUtils.escapeJava(pathPattern)
           } else {
             pathPattern
           }
