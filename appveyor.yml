@@ -25,7 +25,9 @@ environment:
   NOLINT_ON_COMPILE: 0
 
   matrix:
-    - goal: "\"test-only org.apache.spark.sql.hive.PartitionProviderCompatibilitySuite org.apache.spark.sql.hive.StatisticsSuite org.apache.spark.sql.hive.execution.SQLQuerySuite\""
+    - goal: "\"test-only org.apache.spark.sql.hive.PartitionProviderCompatibilitySuite\""
+      profiles: "-Phive"
+    - goal: "\"test-only org.apache.spark.sql.hive.StatisticsSuite org.apache.spark.sql.hive.execution.SQLQuerySuite\""
       profiles: "-Phive"
     - goal: "\"test-only *.Java* \""
       profiles: "-Phive"
