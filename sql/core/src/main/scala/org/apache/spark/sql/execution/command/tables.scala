@@ -237,6 +237,7 @@ case class LoadDataCommand(
           if (files == null) {
             false
           } else {
+            println(pathPattern.toString)
             val matcher = fileSystem.getPathMatcher("glob:" + pathPattern)
             files.exists(f => matcher.matches(fileSystem.getPath(f.getAbsolutePath)))
           }
