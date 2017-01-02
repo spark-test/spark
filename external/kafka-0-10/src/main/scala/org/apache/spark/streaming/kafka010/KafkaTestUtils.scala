@@ -135,11 +135,8 @@ private[kafka010] class KafkaTestUtils extends Logging {
 
     if (server != null) {
       server.shutdown()
-      server.awaitShutdown()
       server = null
     }
-
-    brokerConf.logDirs.foreach { f => Utils.deleteRecursively(new File(f)) }
 
     if (zkUtils != null) {
       zkUtils.close()
@@ -150,6 +147,8 @@ private[kafka010] class KafkaTestUtils extends Logging {
       zookeeper.shutdown()
       zookeeper = null
     }
+
+    brokerConf.logDirs.foreach { f => Utils.deleteRecursively(new File(f)) }
   }
 
   /** Create a Kafka topic and wait until it is propagated to the whole cluster */
