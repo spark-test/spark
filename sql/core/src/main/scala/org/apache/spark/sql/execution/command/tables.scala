@@ -231,13 +231,11 @@ case class LoadDataCommand(
               s"LOAD DATA input path allows only filename wildcard: $path")
           }
 
-          val dirPath = fileSystem.getPath(dir).toAbsolutePath.toString
-          val pathPattern = new File(dirPath, file.getName)
+          val pathPattern = s"${fileSystem.getPath(dir).toUri.getPath}/${file.getName}"
           val files = new File(dir).listFiles()
           if (files == null) {
             false
           } else {
-            println(pathPattern.toString)
             val matcher = fileSystem.getPathMatcher("glob:" + pathPattern)
             files.exists(f => matcher.matches(fileSystem.getPath(f.getAbsolutePath)))
           }
