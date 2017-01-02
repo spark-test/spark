@@ -69,6 +69,9 @@ class ReliableKafkaStreamSuite extends SparkFunSuite
       ssc.stop(stopSparkContext = true)
       ssc = null
     }
+
+    Thread.sleep(20000L)
+
     Utils.deleteRecursively(tempDirectory)
 
     if (kafkaTestUtils != null) {

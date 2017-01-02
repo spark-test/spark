@@ -149,6 +149,8 @@ private[kafka010] class KafkaTestUtils extends Logging {
       zookeeper = null
     }
 
+    Thread.sleep(20000L)
+
     brokerConf.logDirs.foreach { f => Utils.deleteRecursively(new File(f)) }
   }
 
