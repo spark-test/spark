@@ -237,7 +237,12 @@ case class LoadDataCommand(
             false
           } else {
             val matcher = fileSystem.getPathMatcher("glob:" + pathPattern)
-            files.exists(f => matcher.matches(fileSystem.getPath(f.getAbsolutePath)))
+            println(pathPattern)
+            files.exists { f =>
+              val a = fileSystem.getPath(f.getAbsolutePath)
+              println(a)
+              matcher.matches(a)
+            }
           }
         } else {
           new File(file.getAbsolutePath).exists()
