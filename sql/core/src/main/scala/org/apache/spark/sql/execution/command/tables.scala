@@ -222,7 +222,7 @@ case class LoadDataCommand(
     val loadPath =
       if (isLocal) {
         val uri = Utils.resolveURI(path)
-        val filePath = uri.getPath()
+        val filePath = new File(uri.getPath).getAbsolutePath
         val exists = if (filePath.contains("*")) {
           val fileSystem = FileSystems.getDefault
           val pathPattern = fileSystem.getPath(filePath)
