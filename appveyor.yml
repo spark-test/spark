@@ -25,16 +25,8 @@ environment:
   NOLINT_ON_COMPILE: 0
 
   matrix:
-    - goal: "\"test-only org.apache.spark.sql.hive.PartitionProviderCompatibilitySuite\""
-      profiles: "-Phive"
     - goal: "\"test-only org.apache.spark.sql.hive.StatisticsSuite org.apache.spark.sql.hive.execution.SQLQuerySuite\""
       profiles: "-Phive"
-    - goal: "\"test-only *.Java* \""
-      profiles: "-Phive"
-    - goal: "\"test-only org.apache.spark.sql.hive.execution.WindowQuerySuite org.apache.spark.sql.hive.orc.OrcSourceSuite org.apache.spark.sql.hive.ParquetMetastoreSuite org.apache.spark.sql.hive.ParquetSourceSuite\""
-      profiles: "-Phive"
-    - goal: "\"test-only org.apache.spark.streaming.kafka.KafkaRDDSuite org.apache.spark.streaming.kafka.DirectKafkaStreamSuite org.apache.spark.streaming.kafka.ReliableKafkaStreamSuite org.apache.spark.streaming.kafka.KafkaStreamSuite org.apache.spark.streaming.kafka.KafkaClusterSuite org.apache.spark.streaming.kafka010.DirectKafkaStreamSuite org.apache.spark.streaming.kafka010.KafkaRDDSuite\""
-      profiles: ""
 cache:
   - C:\Users\appveyor\.m2
 
