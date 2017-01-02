@@ -140,6 +140,8 @@ private[kafka] class KafkaTestUtils extends Logging {
       server = null
     }
 
+    brokerConf.logDirs.foreach { f => Utils.deleteRecursively(new File(f)) }
+
     if (zkClient != null) {
       zkClient.close()
       zkClient = null
@@ -149,8 +151,6 @@ private[kafka] class KafkaTestUtils extends Logging {
       zookeeper.shutdown()
       zookeeper = null
     }
-
-    brokerConf.logDirs.foreach { f => Utils.deleteRecursively(new File(f)) }
   }
 
   /** Create a Kafka topic and wait until it is propagated to the whole cluster */
@@ -267,6 +267,7 @@ private[kafka] class KafkaTestUtils extends Logging {
     val actualPort = factory.getLocalPort
 
     def shutdown() {
+      factory.closeAll()
       factory.shutdown()
       Utils.deleteRecursively(snapshotDir)
       Utils.deleteRecursively(logDir)

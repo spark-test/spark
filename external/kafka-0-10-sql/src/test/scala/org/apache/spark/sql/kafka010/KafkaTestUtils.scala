@@ -373,6 +373,7 @@ class KafkaTestUtils extends Logging {
     val actualPort = factory.getLocalPort
 
     def shutdown() {
+      factory.closeAll()
       factory.shutdown()
       Utils.deleteRecursively(snapshotDir)
       Utils.deleteRecursively(logDir)
