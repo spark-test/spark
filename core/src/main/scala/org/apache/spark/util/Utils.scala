@@ -985,7 +985,7 @@ private[spark] object Utils extends Logging {
    * Don't follow directories if they are symlinks.
    * Throws an exception if deletion is unsuccessful.
    */
-  def deleteRecursively(file: File) {
+  def deleteRecursively(file: File, flag: Boolean = false) {
     if (file != null) {
       try {
         if (file.isDirectory && !isSymlink(file)) {
@@ -1004,7 +1004,9 @@ private[spark] object Utils extends Logging {
           ShutdownHookManager.removeShutdownDeleteDir(file)
         }
       } finally {
-        println(file.getAbsolutePath)
+        if (flag) {
+          println(file.getAbsolutePath)
+        }
         if (!file.delete()) {
           // Delete can also fail if the file simply did not exist
           if (file.exists()) {
