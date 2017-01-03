@@ -37,7 +37,6 @@ import org.apache.spark.internal.Logging
 import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.{Milliseconds, StreamingContext, Time}
 import org.apache.spark.streaming.dstream.DStream
-import org.apache.spark.streaming.kafka.KafkaCluster.LeaderOffset
 import org.apache.spark.streaming.scheduler._
 import org.apache.spark.streaming.scheduler.rate.RateEstimator
 import org.apache.spark.util.Utils
@@ -52,7 +51,6 @@ class DirectKafkaStreamSuite
     .setMaster("local[4]")
     .setAppName(this.getClass.getSimpleName)
 
-  private var sc: SparkContext = _
   private var ssc: StreamingContext = _
   private var testDir: File = _
 
@@ -64,6 +62,11 @@ class DirectKafkaStreamSuite
   }
 
   override def afterAll {
+    if (ssc != null) {
+      ssc.stop(stopSparkContext = true)
+      ssc = null
+    }
+
     if (kafkaTestUtils != null) {
       kafkaTestUtils.teardown()
       kafkaTestUtils = null
@@ -73,10 +76,6 @@ class DirectKafkaStreamSuite
   after {
     if (ssc != null) {
       ssc.stop()
-      sc = null
-    }
-    if (sc != null) {
-      sc.stop()
     }
     if (testDir != null) {
       Utils.deleteRecursively(testDir)
