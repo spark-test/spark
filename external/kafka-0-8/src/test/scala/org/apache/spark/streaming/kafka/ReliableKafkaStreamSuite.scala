@@ -50,7 +50,7 @@ class ReliableKafkaStreamSuite extends SparkFunSuite
   private var ssc: StreamingContext = _
   private var tempDirectory: File = null
 
-  override def beforeAll(): Unit = {
+  before {
     kafkaTestUtils = new KafkaTestUtils
     kafkaTestUtils.setup()
 
@@ -62,9 +62,12 @@ class ReliableKafkaStreamSuite extends SparkFunSuite
     )
 
     tempDirectory = Utils.createTempDir()
+
+    ssc = new StreamingContext(sparkConf, Milliseconds(500))
+    ssc.checkpoint(tempDirectory.getAbsolutePath)
   }
 
-  override def afterAll(): Unit = {
+  after {
     if (ssc != null) {
       ssc.stop(stopSparkContext = true)
       ssc = null
@@ -74,17 +77,6 @@ class ReliableKafkaStreamSuite extends SparkFunSuite
     if (kafkaTestUtils != null) {
       kafkaTestUtils.teardown()
       kafkaTestUtils = null
-    }
-  }
-
-  before {
-    ssc = new StreamingContext(sparkConf, Milliseconds(500))
-    ssc.checkpoint(tempDirectory.getAbsolutePath)
-  }
-
-  after {
-    if (ssc != null) {
-      ssc.stop()
     }
   }
 
