@@ -346,12 +346,11 @@ object CheckpointReader extends Logging {
     checkpointFiles.foreach { file =>
       logInfo(s"Attempting to load checkpoint from file $file")
       try {
-        Utils.tryWithResource(fs.open(file)) { fis =>
-          val cp = Checkpoint.deserialize(fis, conf)
-          logInfo(s"Checkpoint successfully loaded from file $file")
-          logInfo(s"Checkpoint was generated at time ${cp.checkpointTime}")
-          return Some(cp)
-        }
+        val fis = fs.open(file)
+        val cp = Checkpoint.deserialize(fis, conf)
+        logInfo(s"Checkpoint successfully loaded from file $file")
+        logInfo(s"Checkpoint was generated at time ${cp.checkpointTime}")
+        return Some(cp)
       } catch {
         case e: Exception =>
           readError = e

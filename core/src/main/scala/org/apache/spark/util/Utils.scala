@@ -986,6 +986,7 @@ private[spark] object Utils extends Logging {
    * Throws an exception if deletion is unsuccessful.
    */
   def deleteRecursively(file: File) {
+    println(file.getAbsolutePath)
     if (file != null) {
       try {
         if (file.isDirectory && !isSymlink(file)) {
