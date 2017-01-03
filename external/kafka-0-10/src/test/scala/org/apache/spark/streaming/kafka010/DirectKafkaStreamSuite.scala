@@ -80,7 +80,7 @@ class DirectKafkaStreamSuite
       ssc.stop()
     }
     if (testDir != null) {
-      Utils.deleteRecursively(testDir)
+      Utils.deleteRecursivelyWithPrintPath(testDir)
     }
   }
 
