@@ -176,11 +176,15 @@ private[spark] object ReliableCheckpointRDD extends Logging {
         fs.getDefaultReplication(fs.getWorkingDirectory), blockSize)
     }
     val serializer = env.serializer.newInstance()
-    val serializeStream = serializer.serializeStream(fileOutputStream)
     Utils.tryWithSafeFinally {
-      serializeStream.writeAll(iterator)
+      val serializeStream = serializer.serializeStream(fileOutputStream)
+      Utils.tryWithSafeFinally {
+        serializeStream.writeAll(iterator)
+      } {
+        serializeStream.close()
+      }
     } {
-      serializeStream.close()
+      fileOutputStream.close()
     }
 
     if (!fs.rename(tempOutputPath, finalOutputPath)) {
@@ -211,11 +215,15 @@ private[spark] object ReliableCheckpointRDD extends Logging {
       val fs = partitionerFilePath.getFileSystem(sc.hadoopConfiguration)
       val fileOutputStream = fs.create(partitionerFilePath, false, bufferSize)
       val serializer = SparkEnv.get.serializer.newInstance()
-      val serializeStream = serializer.serializeStream(fileOutputStream)
       Utils.tryWithSafeFinally {
-        serializeStream.writeObject(partitioner)
+        val serializeStream = serializer.serializeStream(fileOutputStream)
+        Utils.tryWithSafeFinally {
+          serializeStream.writeObject(partitioner)
+        } {
+          serializeStream.close()
+        }
       } {
-        serializeStream.close()
+        fileOutputStream.close()
       }
       logDebug(s"Written partitioner to $partitionerFilePath")
     } catch {

@@ -58,19 +58,12 @@ class DirectKafkaStreamSuite
 
   private var kafkaTestUtils: KafkaTestUtils = _
 
-  before {
+  override def beforeAll {
     kafkaTestUtils = new KafkaTestUtils
     kafkaTestUtils.setup()
   }
 
-  after {
-    if (ssc != null) {
-      ssc.stop()
-    }
-    if (testDir != null) {
-      Utils.deleteRecursively(testDir)
-    }
-
+  override def afterAll {
     if (ssc != null) {
       ssc.stop(stopSparkContext = true)
       ssc = null
@@ -79,6 +72,15 @@ class DirectKafkaStreamSuite
     if (kafkaTestUtils != null) {
       kafkaTestUtils.teardown()
       kafkaTestUtils = null
+    }
+  }
+
+  after {
+    if (ssc != null) {
+      ssc.stop()
+    }
+    if (testDir != null) {
+      Utils.deleteRecursively(testDir)
     }
   }
 
@@ -153,7 +155,7 @@ class DirectKafkaStreamSuite
         "didn't get expected number of messages, messages:\n" +
           allReceived.asScala.mkString("\n"))
     }
-    ssc.stop(stopSparkContext = true)
+    ssc.stop()
   }
 
   test("pattern based subscription") {
@@ -219,7 +221,7 @@ class DirectKafkaStreamSuite
         "didn't get expected number of messages, messages:\n" +
           allReceived.asScala.mkString("\n"))
     }
-    ssc.stop(stopSparkContext = true)
+    ssc.stop()
   }
 
 
@@ -271,7 +273,7 @@ class DirectKafkaStreamSuite
       collectedData.contains("b")
     }
     assert(!collectedData.contains("a"))
-    ssc.stop(stopSparkContext = true)
+    ssc.stop()
   }
 
 
@@ -325,7 +327,7 @@ class DirectKafkaStreamSuite
       collectedData.contains("b")
     }
     assert(!collectedData.contains("a"))
-    ssc.stop(stopSparkContext = true)
+    ssc.stop()
   }
 
   // Test to verify the offset ranges can be recovered from the checkpoints
@@ -412,7 +414,7 @@ class DirectKafkaStreamSuite
     eventually(timeout(20 seconds), interval(50 milliseconds)) {
       assert(DirectKafkaStreamSuite.total.get === (1 to 20).sum)
     }
-    ssc.stop(stopSparkContext = true)
+    ssc.stop()
   }
 
     // Test to verify the offsets can be recovered from Kafka
@@ -515,7 +517,7 @@ class DirectKafkaStreamSuite
       assert(collector.numRecordsStarted.get() === totalSent)
       assert(collector.numRecordsCompleted.get() === totalSent)
     }
-    ssc.stop(stopSparkContext = true)
+    ssc.stop()
   }
 
   test("maxMessagesPerPartition with backpressure disabled") {
@@ -617,7 +619,7 @@ class DirectKafkaStreamSuite
       }
     }
 
-    ssc.stop(stopSparkContext = true)
+    ssc.stop()
   }
 
   /** Get the generated offset ranges from the DirectKafkaStream */
