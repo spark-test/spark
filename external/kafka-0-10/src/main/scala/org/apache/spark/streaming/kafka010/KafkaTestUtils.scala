@@ -282,9 +282,7 @@ private[kafka010] class KafkaTestUtils extends Logging {
       if (FileUtils.deleteQuietly(snapshotDir)) {
         logWarning("Failed to delete: " + snapshotDir.getAbsolutePath)
       }
-      if (FileUtils.deleteQuietly(logDir)) {
-        logWarning("Failed to delete: " + logDir.getAbsolutePath)
-      }
+      Utils.deleteRecursively(logDir)
     }
   }
 }
