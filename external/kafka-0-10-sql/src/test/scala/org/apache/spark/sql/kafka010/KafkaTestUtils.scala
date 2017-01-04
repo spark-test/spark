@@ -142,6 +142,10 @@ class KafkaTestUtils extends Logging {
       server = null
     }
 
+    brokerConf.logDirs.map(new File(_))
+      .filter(FileUtils.deleteQuietly)
+      .foreach(f => logWarning("Failed to delete: " + f.getAbsolutePath))
+
     if (zkUtils != null) {
       zkUtils.close()
       zkUtils = null
@@ -151,8 +155,6 @@ class KafkaTestUtils extends Logging {
       zookeeper.shutdown()
       zookeeper = null
     }
-
-    brokerConf.logDirs.foreach { f => Utils.deleteRecursively(new File(f)) }
   }
 
   /** Create a Kafka topic and wait until it is propagated to the whole cluster */
@@ -375,13 +377,13 @@ class KafkaTestUtils extends Logging {
 
     def shutdown() {
       factory.shutdown()
-      if (Utils.isWindows) {
-        // `snapshotDir` is not closed within ZooKeeper server. Please see ZOOKEEPER-1844.
-        FileUtils.deleteQuietly(snapshotDir)
-        FileUtils.deleteQuietly(logDir)
-      } else {
-        Utils.deleteRecursively(snapshotDir)
-        Utils.deleteRecursively(logDir)
+      // `snapshotDir` is not closed within ZooKeeper server. Please see ZOOKEEPER-1844.
+      // This leads to test failures on Windows if these are not ignored.
+      if (FileUtils.deleteQuietly(snapshotDir)) {
+        logWarning("Failed to delete: " + snapshotDir.getAbsolutePath)
+      }
+      if (FileUtils.deleteQuietly(logDir)) {
+        logWarning("Failed to delete: " + logDir.getAbsolutePath)
       }
     }
   }
