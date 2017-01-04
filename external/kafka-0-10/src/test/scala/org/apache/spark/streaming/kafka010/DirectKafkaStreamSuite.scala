@@ -235,7 +235,7 @@ class DirectKafkaStreamSuite
 
     // Send some initial messages before starting context
     kafkaTestUtils.sendMessages(topic, data)
-    eventually(timeout(10 seconds), interval(20 milliseconds)) {
+    eventually(timeout(20 seconds), interval(20 milliseconds)) {
       assert(getLatestOffset() > 3)
     }
     val offsetBeforeStart = getLatestOffset()
@@ -264,7 +264,7 @@ class DirectKafkaStreamSuite
     ssc.start()
     val newData = Map("b" -> 10)
     kafkaTestUtils.sendMessages(topic, newData)
-    eventually(timeout(10 seconds), interval(50 milliseconds)) {
+    eventually(timeout(20 seconds), interval(50 milliseconds)) {
       collectedData.contains("b")
     }
     assert(!collectedData.contains("a"))
@@ -287,7 +287,7 @@ class DirectKafkaStreamSuite
 
     // Send some initial messages before starting context
     kafkaTestUtils.sendMessages(topic, data)
-    eventually(timeout(10 seconds), interval(20 milliseconds)) {
+    eventually(timeout(20 seconds), interval(20 milliseconds)) {
       assert(getLatestOffset() >= 10)
     }
     val offsetBeforeStart = getLatestOffset()
@@ -318,7 +318,7 @@ class DirectKafkaStreamSuite
     ssc.start()
     val newData = Map("b" -> 10)
     kafkaTestUtils.sendMessages(topic, newData)
-    eventually(timeout(10 seconds), interval(50 milliseconds)) {
+    eventually(timeout(20 seconds), interval(50 milliseconds)) {
       collectedData.contains("b")
     }
     assert(!collectedData.contains("a"))
@@ -429,7 +429,7 @@ class DirectKafkaStreamSuite
     def sendDataAndWaitForReceive(data: Seq[Int]) {
       val strings = data.map { _.toString}
       kafkaTestUtils.sendMessages(topic, strings.map { _ -> 1}.toMap)
-      eventually(timeout(10 seconds), interval(50 milliseconds)) {
+      eventually(timeout(20 seconds), interval(50 milliseconds)) {
         assert(strings.forall { collectedData.contains })
       }
     }
