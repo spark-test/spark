@@ -78,6 +78,7 @@ class DirectKafkaStreamSuite
       Utils.deleteRecursively(testDir)
     }
   }
+
   def getKafkaParams(extra: (String, Object)*): JHashMap[String, Object] = {
     val kp = new JHashMap[String, Object]()
     kp.put("bootstrap.servers", kafkaTestUtils.brokerAddress)
