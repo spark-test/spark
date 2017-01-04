@@ -58,16 +58,9 @@ class DirectKafkaStreamSuite
 
   private var kafkaTestUtils: KafkaTestUtils = _
 
-  override def beforeAll {
+  before {
     kafkaTestUtils = new KafkaTestUtils
     kafkaTestUtils.setup()
-  }
-
-  override def afterAll {
-    if (kafkaTestUtils != null) {
-      kafkaTestUtils.teardown()
-      kafkaTestUtils = null
-    }
   }
 
   after {
@@ -76,6 +69,11 @@ class DirectKafkaStreamSuite
     }
     if (testDir != null) {
       Utils.deleteRecursively(testDir)
+    }
+
+    if (kafkaTestUtils != null) {
+      kafkaTestUtils.teardown()
+      kafkaTestUtils = null
     }
   }
 
