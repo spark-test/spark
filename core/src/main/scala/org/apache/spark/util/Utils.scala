@@ -1003,8 +1003,10 @@ private[spark] object Utils extends Logging {
           }
           ShutdownHookManager.removeShutdownDeleteDir(file)
         }
+      } catch {
+        case e: Exception =>
+          println(file.getAbsolutePath)
       } finally {
-        println(file.getAbsolutePath)
         if (!file.delete()) {
           // Delete can also fail if the file simply did not exist
           if (file.exists()) {
