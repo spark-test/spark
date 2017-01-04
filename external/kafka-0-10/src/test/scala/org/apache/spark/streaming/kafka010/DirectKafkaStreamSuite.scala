@@ -64,18 +64,16 @@ class DirectKafkaStreamSuite
   }
 
   override def afterAll {
-    if (kafkaTestUtils != null) {
-      kafkaTestUtils.teardown()
-      kafkaTestUtils = null
-    }
-  }
-
-  after {
     if (ssc != null) {
       ssc.stop(stopSparkContext = true)
     }
     if (testDir != null) {
       Utils.deleteRecursivelyWithPrintPath(testDir)
+    }
+
+    if (kafkaTestUtils != null) {
+      kafkaTestUtils.teardown()
+      kafkaTestUtils = null
     }
   }
 
