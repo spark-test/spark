@@ -64,19 +64,20 @@ class DirectKafkaStreamSuite
   }
 
   override def afterAll {
-    if (ssc != null) {
-      ssc.stop(stopSparkContext = true)
-    }
-    if (testDir != null) {
-      Utils.deleteRecursivelyWithPrintPath(testDir)
-    }
-
     if (kafkaTestUtils != null) {
       kafkaTestUtils.teardown()
       kafkaTestUtils = null
     }
   }
 
+  after {
+    if (ssc != null) {
+      ssc.stop(stopSparkContext = true)
+    }
+    if (testDir != null) {
+      Utils.deleteRecursively(testDir)
+    }
+  }
   def getKafkaParams(extra: (String, Object)*): JHashMap[String, Object] = {
     val kp = new JHashMap[String, Object]()
     kp.put("bootstrap.servers", kafkaTestUtils.brokerAddress)
