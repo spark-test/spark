@@ -37,6 +37,8 @@ environment:
       profiles: "-Phive"
     - goal: "\"test-only org.apache.spark.sql.hive.execution.HiveDDLSuite\""
       profiles: "-Phive"
+    - goal: "\"test-only org.apache.spark.sql.hive.execution.HiveSerDeSuite\""
+      profiles: "-Phive"
     - goal: "\"test-only org.apache.spark.scheduler.SparkListenerSuite\""
       profiles: ""
 cache:
