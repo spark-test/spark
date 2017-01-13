@@ -392,6 +392,9 @@ class SparkListenerSuite extends SparkFunSuite with LocalSparkContext with Match
    * Assert that the given list of numbers has an average that is greater than zero.
    */
   private def checkNonZeroAvg(m: Traversable[Long], msg: String) {
+    println(msg + " : " + m)
+    println(msg + " : " + m.sum)
+    println(msg + " : " + m.size.toDouble)
     assert(m.sum / m.size.toDouble > 0.0, msg)
   }
 
