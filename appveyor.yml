@@ -27,9 +27,7 @@ environment:
   matrix:
     - goal: "\"test-only org.apache.spark.sql.hive.execution.HiveQuerySuite\""
       profiles: "-Phive"
-    - goal: "\"test-only org.apache.spark.sql.hive.execution.HashAggregationQuerySuite\""
-      profiles: "-Phive"
-    - goal: "\"test-only org.apache.spark.sql.hive.execution.HashAggregationQueryWithControlledFallbackSuite\""
+    - goal: "\"test-only org.apache.spark.sql.hive.execution.SQLQuerySuite\""
       profiles: "-Phive"
     - goal: "\"test-only org.apache.spark.sql.hive.orc.OrcSourceSuite\""
       profiles: "-Phive"
