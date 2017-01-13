@@ -109,7 +109,7 @@ Invoke-Expression "7z.exe x winutils-master.zip"
 
 # add hadoop bin to environment variables
 $env:HADOOP_HOME = "$hadoopPath\winutils-master\hadoop-$hadoopVer"
-$env:Path += ";$hadoopPath\winutils-master\hadoop-$hadoopVer\bin"
+$env:Path += ";$env:HADOOP_HOME\bin"
 
 Pop-Location
 
