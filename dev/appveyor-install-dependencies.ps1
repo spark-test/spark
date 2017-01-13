@@ -108,7 +108,8 @@ Start-FileDownload "https://github.com/steveloughran/winutils/archive/master.zip
 Invoke-Expression "7z.exe x winutils-master.zip"
 
 # add hadoop bin to environment variables
-$env:HADOOP_HOME = "$hadoopPath/winutils-master/hadoop-$hadoopVer"
+$env:HADOOP_HOME = "$hadoopPath\winutils-master\hadoop-$hadoopVer"
+$env:Path += ";$hadoopPath\winutils-master\hadoop-$hadoopVer\bin"
 
 Pop-Location
 
