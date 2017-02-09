@@ -324,9 +324,9 @@ spark.addFile <- function(path, recursive = FALSE) {
 #'
 #' The \code{path} passed can be either a local file, a file in HDFS (or other Hadoop-supported
 #' filesystems), an HTTP, HTTPS or FTP URI, or local:/path for a file on every worker node.
-#' If addToCurrentClassLoader is true, attempt to add the new class to the current threads'
-#' class loader. In general adding to the current threads' class loader will impact all other
-#' application threads unless they have explicitly changed their class loader.
+#' If \code{addToCurrentClassLoader} is true, add the jar to the current threads' classloader. In
+#' general adding to the current threads' class loader will impact all other application threads
+#' unless they have explicitly changed their class loader.
 #'
 #' @rdname spark.addJar
 #' @param path The path of the jar to be added
@@ -337,7 +337,7 @@ spark.addFile <- function(path, recursive = FALSE) {
 #'\dontrun{
 #' spark.addJar("/path/to/something.jar", TRUE)
 #'}
-#' @note spark.addJar since 2.1.0
+#' @note spark.addJar since 2.2.0
 spark.addJar <- function(path, addToCurrentClassLoader = FALSE) {
   sc <- getSparkContext()
   normalizedPath <- suppressWarnings(normalizePath(path))
