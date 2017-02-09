@@ -848,7 +848,7 @@ class SparkContext(object):
 
         :param path The path of the jar to be added
         :param addToCurrentClassLoader Whether to add the jar to the current driver classloader.
-                This defaults to False.
+               This defaults to False.
         """
         self._jsc.sc().addJar(path, addToCurrentClassLoader)
 
