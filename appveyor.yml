@@ -20,14 +20,6 @@ shallow_clone: true
 platform: x64
 configuration: Debug
 
-branches:
-  only:
-    - master
-
-only_commits:
-  files:
-    - R/
-
 cache:
   - C:\Users\appveyor\.m2
 
