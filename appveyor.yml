@@ -35,7 +35,7 @@ install:
   - cmd: R -e "packageVersion('survival')"
 
 build_script:
-  - cmd: mvn -DskipTests -Psparkr -Phive -Phive-thriftserver package
+  - cmd: mvn -DskipTests -Psparkr -Phadoop-2.6 -Phive -Phive-thriftserver package
 
 test_script:
   - cmd: .\bin\spark-submit2.cmd --conf spark.hadoop.fs.default.name="file:///" R\pkg\tests\run-all.R
