@@ -20,14 +20,6 @@ shallow_clone: true
 platform: x64
 configuration: Debug
 
-branches:
-  only:
-    - master
-
-only_commits:
-  files:
-    - R/
-
 cache:
   - C:\Users\appveyor\.m2
 
@@ -47,6 +39,7 @@ build_script:
 
 test_script:
   - cmd: .\bin\spark-submit2.cmd --conf spark.hadoop.fs.default.name="file:///" R\pkg\tests\run-all.R
+  - cmd: bash -lc "cd R && cran-check.sh"
 
 notifications:
   - provider: Email
