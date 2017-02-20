@@ -1878,16 +1878,16 @@ class DDLSuite extends QueryTest with SharedSQLContext with BeforeAndAfterEach {
   test("insert into a data source table with no existed partition location should succeed") {
     withTable("t") {
       withTempDir { dir =>
+        val path = dir.toURI.toString.stripSuffix("/")
         spark.sql(
           s"""
              |CREATE TABLE t(a int, b int, c int, d int)
              |USING parquet
              |PARTITIONED BY(a, b)
-             |LOCATION "${dir.toURI}"
+             |LOCATION "$path"
            """.stripMargin)
         val table = spark.sessionState.catalog.getTableMetadata(TableIdentifier("t"))
-        val expectedPath = dir.toURI.toString.stripSuffix("/")
-        assert(table.location.stripSuffix("/") == expectedPath)
+        assert(table.location == path)
 
         spark.sql("INSERT INTO TABLE t PARTITION(a=1, b=2) SELECT 3, 4")
         checkAnswer(spark.table("t"), Row(3, 4, 1, 2) :: Nil)
@@ -1906,25 +1906,26 @@ class DDLSuite extends QueryTest with SharedSQLContext with BeforeAndAfterEach {
   test("read data from a data source table which has a not existed location should succeed") {
     withTable("t") {
       withTempDir { dir =>
+        val path = dir.toURI.toString.stripSuffix("/")
         spark.sql(
           s"""
              |CREATE TABLE t(a string, b int)
              |USING parquet
-             |OPTIONS(path "${dir.toURI}")
+             |OPTIONS(path "$path")
            """.stripMargin)
         val table = spark.sessionState.catalog.getTableMetadata(TableIdentifier("t"))
-        val expectedPath = dir.toURI.toString.stripSuffix("/")
-        assert(table.location.stripSuffix("/") == expectedPath)
+        assert(table.location == path)
 
         dir.delete()
         checkAnswer(spark.table("t"), Nil)
 
-        val newDir = dir.toURI.toString.stripSuffix("/") + "/x"
+        val newDirFile = new File(dir, "x")
+        val newDir = newDirFile.toURI.toString
         spark.sql(s"ALTER TABLE t SET LOCATION '$newDir'")
 
         val table1 = spark.sessionState.catalog.getTableMetadata(TableIdentifier("t"))
         assert(table1.location == newDir)
-        assert(!new File(newDir).exists())
+        assert(!newDirFile.exists())
         checkAnswer(spark.table("t"), Nil)
       }
     }

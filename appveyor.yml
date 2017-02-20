@@ -25,8 +25,6 @@ environment:
   NOLINT_ON_COMPILE: 0
 
   matrix:
-    - goal: "\"test-only org.apache.spark.sql.kafka010.KafkaSourceSuite\""
-      profiles: "-Phive"
     - goal: "\"test-only org.apache.spark.sql.execution.command.DDLSuite\""
       profiles: "-Phive"
 cache:
