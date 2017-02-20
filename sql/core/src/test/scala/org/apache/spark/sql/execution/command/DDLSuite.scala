@@ -1836,15 +1836,15 @@ class DDLSuite extends QueryTest with SharedSQLContext with BeforeAndAfterEach {
   test("insert data to a data source table which has a not existed location should succeed") {
     withTable("t") {
       withTempDir { dir =>
+        val path = dir.toURI.toString.stripSuffix("/")
         spark.sql(
           s"""
              |CREATE TABLE t(a string, b int)
              |USING parquet
-             |OPTIONS(path "${dir.toURI}")
+             |OPTIONS(path "$path")
            """.stripMargin)
         val table = spark.sessionState.catalog.getTableMetadata(TableIdentifier("t"))
-        val expectedPath = dir.toURI.toString.stripSuffix("/")
-        assert(table.location.stripSuffix("/") == expectedPath)
+        assert(table.location == path)
 
         dir.delete
         val tableLocFile = new File(table.location.stripPrefix("file:"))
@@ -1859,8 +1859,8 @@ class DDLSuite extends QueryTest with SharedSQLContext with BeforeAndAfterEach {
         assert(tableLocFile.exists)
         checkAnswer(spark.table("t"), Row("c", 1) :: Nil)
 
-        val newDir = dir.toURI.toString.stripSuffix("/") + "/x"
-        val newDirFile = new File(newDir)
+        val newDirFile = new File(dir, "x")
+        val newDir = newDirFile.toURI.toString
         spark.sql(s"ALTER TABLE t SET LOCATION '$newDir'")
         spark.sessionState.catalog.refreshTable(TableIdentifier("t"))
 
