@@ -24,6 +24,8 @@ import java.util.Properties
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicInteger
 
+import org.apache.spark.util.Utils
+
 import scala.collection.mutable
 import scala.util.Random
 
@@ -161,11 +163,12 @@ class KafkaSourceSuite extends KafkaSourceTest {
       // Make sure Spark 2.1.0 will throw an exception when reading the new log
       intercept[java.lang.IllegalArgumentException] {
         // Simulate how Spark 2.1.0 reads the log
-        val in = new FileInputStream(metadataPath.getAbsolutePath + "/0")
-        val length = in.read()
-        val bytes = new Array[Byte](length)
-        in.read(bytes)
-        KafkaSourceOffset(SerializedOffset(new String(bytes, UTF_8)))
+        Utils.tryWithResource(new FileInputStream(metadataPath.getAbsolutePath + "/0")) { in =>
+          val length = in.read()
+          val bytes = new Array[Byte](length)
+          in.read(bytes)
+          KafkaSourceOffset(SerializedOffset(new String(bytes, UTF_8)))
+        }
       }
     }
   }
@@ -186,8 +189,8 @@ class KafkaSourceSuite extends KafkaSourceTest {
       val to = Paths.get(s"${metadataPath.getAbsolutePath}/0")
       Files.copy(from, to)
 
-      val source = provider.createSource(spark.sqlContext, metadataPath.getAbsolutePath, None,
-        "", parameters)
+      val source = provider.createSource(
+        spark.sqlContext, metadataPath.toURI.toString, None, "", parameters)
       val deserializedOffset = source.getOffset.get
       val referenceOffset = KafkaSourceOffset((topic, 0, 0L), (topic, 1, 0L), (topic, 2, 0L))
       assert(referenceOffset == deserializedOffset)
