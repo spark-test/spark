@@ -846,8 +846,8 @@ class SparkContext(object):
         In general adding to the current threads' class loader will impact all other application
         threads unless they have explicitly changed their class loader.
 
-        :param path The path of the jar to be added
-        :param addToCurrentClassLoader Whether to add the jar to the current driver classloader.
+        :param path: The path of the jar to be added
+        :param addToCurrentClassLoader: Whether to add the jar to the current driver classloader.
                This defaults to False.
         """
         self._jsc.sc().addJar(path, addToCurrentClassLoader)
