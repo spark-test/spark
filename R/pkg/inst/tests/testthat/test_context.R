@@ -167,7 +167,7 @@ test_that("spark.lapply should perform simple transforms", {
   sparkR.session.stop()
 })
 
-test_that("add jar should work and allow usage of the jar on the driver node" {
+test_that("add jar should work and allow usage of the jar on the driver node", {
   sparkR.sparkContext()
 
   destDir <- paste0(tempdir(), "/", "testjar")
@@ -177,7 +177,7 @@ test_that("add jar should work and allow usage of the jar on the driver node" {
   spark.addJar(jarName, addToCurrentClassLoader = TRUE)
   testClass <- newJObject("sparkrTests.DummyClassForAddJarTest")
   expect_true(class(testClass) == "jobj")
-}
+})
 
 test_that("add and get file to be downloaded with Spark job on every node", {
   sparkR.sparkContext()
