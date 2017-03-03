@@ -303,7 +303,6 @@ class SparkContextSuite extends SparkFunSuite with LocalSparkContext with Eventu
     sc.addJar("dummy.jar")
     sc.addJar("")
     sc.addJar(tmpDir.getAbsolutePath)
-    val jarPath = TestUtils.createDummyJar(tempDir, packageName, className)
 
     sc.listJars().size should be (1)
     sc.listJars().head should include (tmpJar.getName)
