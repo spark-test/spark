@@ -341,7 +341,7 @@ spark.addFile <- function(path, recursive = FALSE) {
 spark.addJar <- function(path, addToCurrentClassLoader = FALSE) {
   sc <- getSparkContext()
   normalizedPath <- suppressWarnings(normalizePath(path))
-  scala_sc = callJMethod(sc, "sc")
+  scala_sc <- callJMethod(sc, "sc")
   invisible(callJMethod(scala_sc, "addJar", normalizedPath, addToCurrentClassLoader))
 }
 
