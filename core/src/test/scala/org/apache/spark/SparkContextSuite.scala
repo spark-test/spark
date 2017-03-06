@@ -308,9 +308,7 @@ class SparkContextSuite extends SparkFunSuite with LocalSparkContext with Eventu
     sc.listJars().head should include (tmpJar.getName)
   }
 
-  for (
-    schedulingMode <- Seq("local_mode", "non_local_mode")
-  ) {
+  Seq("local_mode", "non_local_mode").foreach { schedulingMode =>
     val tempDir = Utils.createTempDir().toString
     val master = schedulingMode match {
       case "local_mode" => "local"

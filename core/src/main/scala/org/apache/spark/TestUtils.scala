@@ -175,7 +175,7 @@ private[spark] object TestUtils {
     val excSource = new JavaSourceFromString(new File(srcDir, className).toURI.getPath,
       s"""package $packageName;
          |
-          |public class $className implements java.io.Serializable {
+         |public class $className implements java.io.Serializable {
          |  public static String helloWorld(String arg) { return "Hello " + arg; }
          |  public static int addStuff(int arg1, int arg2) { return arg1 + arg2; }
          |}
