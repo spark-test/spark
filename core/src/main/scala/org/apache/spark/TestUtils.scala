@@ -172,7 +172,7 @@ private[spark] object TestUtils {
   def createDummyJar(destDir: String, packageName: String, className: String): String = {
     val srcDir = new File(destDir, packageName)
     srcDir.mkdirs()
-    val excSource = new JavaSourceFromString(new File(srcDir, className).getAbsolutePath,
+    val excSource = new JavaSourceFromString(new File(srcDir, className).toURI.getPath,
       s"""package $packageName;
          |
           |public class $className implements java.io.Serializable {
