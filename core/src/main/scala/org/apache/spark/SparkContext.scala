@@ -1813,6 +1813,7 @@ class SparkContext(config: SparkConf) extends Logging {
    */
   @DeveloperApi
   def addJar(path: String, addToCurrentClassLoader: Boolean) {
+    println("addJar: " + path)
     if (path == null) {
       logWarning("null specified as parameter to addJar")
     } else {

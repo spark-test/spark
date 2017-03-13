@@ -170,6 +170,7 @@ private[spark] object TestUtils {
 
   /** Create a dummy compile jar for a given package, classname.  Jar will be placed in destDir */
   def createDummyJar(destDir: String, packageName: String, className: String): String = {
+    println("createDummyJar:" + destDir)
     val srcDir = new File(destDir, packageName)
     srcDir.mkdirs()
     val excSource = new JavaSourceFromString(new File(srcDir, className).toURI.getPath,
