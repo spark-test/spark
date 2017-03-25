@@ -25,7 +25,7 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable.WrappedArray
 
 /**
- * Utility functions to serialize, deserialize objects to / from R
+ * Utility functions to serialize, deserialize objects to / from R.
  */
 private[spark] object SerDe {
   type SQLReadObject = (DataInputStream, Char) => Object
