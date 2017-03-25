@@ -22,7 +22,7 @@ configuration: Debug
 
 branches:
   only:
-    - master
+    - detect-tests
 
 only_commits:
   files:
