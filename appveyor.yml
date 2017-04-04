@@ -25,20 +25,20 @@ environment:
   NOLINT_ON_COMPILE: 0
 
   matrix:
-    - goal: "core/test"
-      profiles: ""
-    - goal: "catalyst/test sql/test"
-      profiles: ""
-    - goal: "hive/test"
-      profiles: "-Phive -Phive-thriftserver"
-    - goal: "sql-kafka-0-10/test sketch/test graphx/test"
-      profiles: ""
-    - goal: "streaming/test streaming-kafka-0-8/test streaming-kafka-0-10/test streaming-flume-sink/test streaming-flume/test"
-      profiles: ""
-    - goal: "mllib-local/test mllib/test examples/test repl/test"
-      profiles: ""
-    - goal: "network-common/test network-shuffle/test launcher/test unsafe/test"
-      profiles: ""
+    - goal: "\"test-only org.apache.spark.sql.hive.HiveSchemaInferenceSuite\""
+      profiles: "-Phive"
+    - goal: "\"test-only org.apache.spark.sql.execution.command.DDLSuite\""
+      profiles: "-Phive"
+    - goal: "\"test-only org.apache.spark.sql.hive.execution.HiveDDLSuite\""
+      profiles: "-Phive"
+    - goal: "\"test-only org.apache.spark.sql.sources.PathOptionSuite\""
+      profiles: "-Phive"
+    - goal: "\"test-only org.apache.spark.sql.CachedTableSuite\""
+      profiles: "-Phive"
+    - goal: "\"test-only org.apache.spark.sql.execution.DataSourceScanExecRedactionSuite\""
+      profiles: "-Phive"
+
+
 cache:
   - C:\Users\appveyor\.m2
 
@@ -59,7 +59,7 @@ install:
   - cmd: SET SBT_OPTS=-XX:MaxPermSize=2g -Xmx4g
 
 build_script:
-  - cmd: sbt %profiles% package
+  - cmd: sbt  %profiles% package
 
 notifications:
   - provider: Email
@@ -68,5 +68,5 @@ notifications:
     on_build_status_changed: false
 
 test_script:
-  - cmd: sbt -Phadoop-2.6 %profiles% %goal%
+  - cmd: sbt %profiles% %goal%
 

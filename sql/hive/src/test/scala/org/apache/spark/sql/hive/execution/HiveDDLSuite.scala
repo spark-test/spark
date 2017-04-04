@@ -1575,7 +1575,7 @@ class HiveDDLSuite
   test("create hive table with a non-existing location") {
     withTable("t", "t1") {
       withTempPath { dir =>
-        spark.sql(s"CREATE TABLE t(a int, b int) USING hive LOCATION '$dir'")
+        spark.sql(s"CREATE TABLE t(a int, b int) USING hive LOCATION '${dir.toURI}'")
 
         val table = spark.sessionState.catalog.getTableMetadata(TableIdentifier("t"))
         assert(table.location == makeQualifiedPath(dir.getAbsolutePath))
@@ -1592,7 +1592,7 @@ class HiveDDLSuite
              |CREATE TABLE t1(a int, b int)
              |USING hive
              |PARTITIONED BY(a)
-             |LOCATION '$dir'
+             |LOCATION '${dir.toURI}'
            """.stripMargin)
 
         val table = spark.sessionState.catalog.getTableMetadata(TableIdentifier("t1"))
@@ -1620,7 +1620,7 @@ class HiveDDLSuite
               s"""
                  |CREATE TABLE t
                  |USING hive
-                 |LOCATION '$dir'
+                 |LOCATION '${dir.toURI}'
                  |AS SELECT 3 as a, 4 as b, 1 as c, 2 as d
                """.stripMargin)
             val table = spark.sessionState.catalog.getTableMetadata(TableIdentifier("t"))
@@ -1636,7 +1636,7 @@ class HiveDDLSuite
                  |CREATE TABLE t1
                  |USING hive
                  |PARTITIONED BY(a, b)
-                 |LOCATION '$dir'
+                 |LOCATION '${dir.toURI}'
                  |AS SELECT 3 as a, 4 as b, 1 as c, 2 as d
                """.stripMargin)
             val table = spark.sessionState.catalog.getTableMetadata(TableIdentifier("t1"))
@@ -1662,7 +1662,7 @@ class HiveDDLSuite
                  |CREATE TABLE t(a string, `$specialChars` string)
                  |USING $datasource
                  |PARTITIONED BY(`$specialChars`)
-                 |LOCATION '$dir'
+                 |LOCATION '${dir.toURI}'
                """.stripMargin)
 
             assert(dir.listFiles().isEmpty)
@@ -1695,7 +1695,7 @@ class HiveDDLSuite
             s"""
                |CREATE TABLE t(a string)
                |USING hive
-               |LOCATION '$loc'
+               |LOCATION '${loc.toURI}'
              """.stripMargin)
 
           val table = spark.sessionState.catalog.getTableMetadata(TableIdentifier("t"))
@@ -1705,7 +1705,7 @@ class HiveDDLSuite
           assert(loc.listFiles().isEmpty)
           if (specialChars != "a:b") {
             spark.sql("INSERT INTO TABLE t SELECT 1")
-            assert(loc.listFiles().length >= 1)
+            assert(loc.listFiles().nonEmpty)
             checkAnswer(spark.table("t"), Row("1") :: Nil)
           } else {
             val e = intercept[AnalysisException] {

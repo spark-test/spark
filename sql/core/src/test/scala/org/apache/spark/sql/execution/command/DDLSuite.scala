@@ -694,7 +694,7 @@ abstract class DDLSuite extends QueryTest with SQLTestUtils {
       withView("testview") {
         sql(s"CREATE OR REPLACE TEMPORARY VIEW testview (c1 String, c2 String)  USING " +
           "org.apache.spark.sql.execution.datasources.csv.CSVFileFormat  " +
-          s"OPTIONS (PATH '$tmpFile')")
+          s"OPTIONS (PATH '${tmpFile.toURI}')")
 
         checkAnswer(
           sql("select c1, c2 from testview order by c1 limit 1"),
@@ -706,7 +706,7 @@ abstract class DDLSuite extends QueryTest with SQLTestUtils {
             s"""
                |CREATE TEMPORARY VIEW testview
                |USING org.apache.spark.sql.execution.datasources.csv.CSVFileFormat
-               |OPTIONS (PATH '$tmpFile')
+               |OPTIONS (PATH '${tmpFile.toURI}')
              """.stripMargin)
         }
       }
@@ -1863,7 +1863,7 @@ abstract class DDLSuite extends QueryTest with SQLTestUtils {
           s"""
              |CREATE TABLE t(a string, b int)
              |USING parquet
-             |OPTIONS(path "$dir")
+             |OPTIONS(path "${dir.toURI}")
            """.stripMargin)
         val table = spark.sessionState.catalog.getTableMetadata(TableIdentifier("t"))
         assert(table.location == makeQualifiedPath(dir.getAbsolutePath))
@@ -1904,7 +1904,7 @@ abstract class DDLSuite extends QueryTest with SQLTestUtils {
              |CREATE TABLE t(a int, b int, c int, d int)
              |USING parquet
              |PARTITIONED BY(a, b)
-             |LOCATION "$dir"
+             |LOCATION "${dir.toURI}"
            """.stripMargin)
         val table = spark.sessionState.catalog.getTableMetadata(TableIdentifier("t"))
         assert(table.location == makeQualifiedPath(dir.getAbsolutePath))
@@ -1930,7 +1930,7 @@ abstract class DDLSuite extends QueryTest with SQLTestUtils {
           s"""
              |CREATE TABLE t(a string, b int)
              |USING parquet
-             |OPTIONS(path "$dir")
+             |OPTIONS(path "${dir.toURI}")
            """.stripMargin)
         val table = spark.sessionState.catalog.getTableMetadata(TableIdentifier("t"))
 
@@ -1959,7 +1959,7 @@ abstract class DDLSuite extends QueryTest with SQLTestUtils {
              |CREATE TABLE t(a int, b int, c int, d int)
              |USING parquet
              |PARTITIONED BY(a, b)
-             |LOCATION "$dir"
+             |LOCATION "${dir.toURI}"
            """.stripMargin)
         spark.sql("INSERT INTO TABLE t PARTITION(a=1, b=2) SELECT 3, 4")
         checkAnswer(spark.table("t"), Row(3, 4, 1, 2) :: Nil)
@@ -1976,7 +1976,7 @@ abstract class DDLSuite extends QueryTest with SQLTestUtils {
   test("create datasource table with a non-existing location") {
     withTable("t", "t1") {
       withTempPath { dir =>
-        spark.sql(s"CREATE TABLE t(a int, b int) USING parquet LOCATION '$dir'")
+        spark.sql(s"CREATE TABLE t(a int, b int) USING parquet LOCATION '${dir.toURI}'")
 
         val table = spark.sessionState.catalog.getTableMetadata(TableIdentifier("t"))
         assert(table.location == makeQualifiedPath(dir.getAbsolutePath))
@@ -1988,7 +1988,8 @@ abstract class DDLSuite extends QueryTest with SQLTestUtils {
       }
       // partition table
       withTempPath { dir =>
-        spark.sql(s"CREATE TABLE t1(a int, b int) USING parquet PARTITIONED BY(a) LOCATION '$dir'")
+        spark.sql(
+          s"CREATE TABLE t1(a int, b int) USING parquet PARTITIONED BY(a) LOCATION '${dir.toURI}'")
 
         val table = spark.sessionState.catalog.getTableMetadata(TableIdentifier("t1"))
         assert(table.location == makeQualifiedPath(dir.getAbsolutePath))
@@ -2013,7 +2014,7 @@ abstract class DDLSuite extends QueryTest with SQLTestUtils {
             s"""
                |CREATE TABLE t
                |USING parquet
-               |LOCATION '$dir'
+               |LOCATION '${dir.toURI}'
                |AS SELECT 3 as a, 4 as b, 1 as c, 2 as d
              """.stripMargin)
           val table = spark.sessionState.catalog.getTableMetadata(TableIdentifier("t"))
@@ -2029,7 +2030,7 @@ abstract class DDLSuite extends QueryTest with SQLTestUtils {
                |CREATE TABLE t1
                |USING parquet
                |PARTITIONED BY(a, b)
-               |LOCATION '$dir'
+               |LOCATION '${dir.toURI}'
                |AS SELECT 3 as a, 4 as b, 1 as c, 2 as d
              """.stripMargin)
           val table = spark.sessionState.catalog.getTableMetadata(TableIdentifier("t1"))
@@ -2053,7 +2054,7 @@ abstract class DDLSuite extends QueryTest with SQLTestUtils {
                |CREATE TABLE t(a string, `$specialChars` string)
                |USING parquet
                |PARTITIONED BY(`$specialChars`)
-               |LOCATION '$dir'
+               |LOCATION '${dir.toURI}'
              """.stripMargin)
 
           assert(dir.listFiles().isEmpty)
@@ -2128,7 +2129,7 @@ abstract class DDLSuite extends QueryTest with SQLTestUtils {
         withTable("t") {
           withTempDir { dir =>
             val loc = new File(dir, specialChars)
-            spark.sql(s"CREATE DATABASE tmpdb LOCATION '$loc'")
+            spark.sql(s"CREATE DATABASE tmpdb LOCATION '${loc.toURI}'")
             spark.sql("USE tmpdb")
 
             import testImplicits._

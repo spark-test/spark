@@ -149,6 +149,7 @@ class CSVOptions(
     format.setQuote(quote)
     format.setQuoteEscape(escape)
     format.setComment(comment)
+    format.setLineSeparator("a")
     writerSettings.setIgnoreLeadingWhitespaces(ignoreLeadingWhiteSpaceFlagInWrite)
     writerSettings.setIgnoreTrailingWhitespaces(ignoreTrailingWhiteSpaceFlagInWrite)
     writerSettings.setNullValue(nullValue)
