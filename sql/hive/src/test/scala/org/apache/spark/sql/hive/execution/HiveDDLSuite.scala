@@ -21,6 +21,7 @@ import java.io.File
 import java.net.URI
 
 import org.apache.hadoop.fs.Path
+import org.apache.spark.util.Utils
 import org.scalatest.BeforeAndAfterEach
 
 import org.apache.spark.SparkException
@@ -1687,6 +1688,9 @@ class HiveDDLSuite
 
   Seq("a b", "a:b", "a%b").foreach { specialChars =>
     test(s"hive table: location uri contains $specialChars") {
+      // Windows path is not allowed for now and URI path has a double-de/encoding problem
+      // in location for now.
+      assume(!Utils.isWindows)
       withTable("t") {
         withTempDir { dir =>
           val loc = new File(dir, specialChars)
@@ -1695,7 +1699,7 @@ class HiveDDLSuite
             s"""
                |CREATE TABLE t(a string)
                |USING hive
-               |LOCATION '${loc.toURI}'
+               |LOCATION '$loc'
              """.stripMargin)
 
           val table = spark.sessionState.catalog.getTableMetadata(TableIdentifier("t"))
@@ -1734,14 +1738,14 @@ class HiveDDLSuite
           if (specialChars != "a:b") {
             spark.sql("INSERT INTO TABLE t1 PARTITION(b=2) SELECT 1")
             val partFile = new File(loc, "b=2")
-            assert(partFile.listFiles().length >= 1)
+            assert(partFile.listFiles().nonEmpty)
             checkAnswer(spark.table("t1"), Row("1", "2") :: Nil)
 
             spark.sql("INSERT INTO TABLE t1 PARTITION(b='2017-03-03 12:13%3A14') SELECT 1")
             val partFile1 = new File(loc, "b=2017-03-03 12:13%3A14")
             assert(!partFile1.exists())
             val partFile2 = new File(loc, "b=2017-03-03 12%3A13%253A14")
-            assert(partFile2.listFiles().length >= 1)
+            assert(partFile2.listFiles().nonEmpty)
             checkAnswer(spark.table("t1"),
               Row("1", "2") :: Row("1", "2017-03-03 12:13%3A14") :: Nil)
           } else {
