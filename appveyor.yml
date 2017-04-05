@@ -25,15 +25,7 @@ environment:
   NOLINT_ON_COMPILE: 0
 
   matrix:
-    - goal: "\"test-only org.apache.spark.sql.hive.HiveSchemaInferenceSuite\""
-      profiles: "-Phive"
-    - goal: "\"test-only org.apache.spark.sql.execution.command.DDLSuite\""
-      profiles: "-Phive"
     - goal: "\"test-only org.apache.spark.sql.hive.execution.HiveDDLSuite\""
-      profiles: "-Phive"
-    - goal: "\"test-only org.apache.spark.sql.sources.PathOptionSuite\""
-      profiles: "-Phive"
-    - goal: "\"test-only org.apache.spark.sql.CachedTableSuite\""
       profiles: "-Phive"
     - goal: "\"test-only org.apache.spark.sql.execution.DataSourceScanExecRedactionSuite\""
       profiles: "-Phive"
