@@ -43,7 +43,7 @@ class DataSourceScanExecRedactionSuite extends QueryTest with SharedSQLContext {
 
       val rootPath = df.queryExecution.sparkPlan.find(_.isInstanceOf[FileSourceScanExec]).get
         .asInstanceOf[FileSourceScanExec].relation.location.rootPaths.head
-      assert(rootPath.toString.contains(dir.toURI.getPath.stripPrefix("/")))
+      assert(rootPath.toString.contains(dir.toURI.getPath.stripSuffix("/")))
 
       assert(!df.queryExecution.sparkPlan.treeString(verbose = true).contains(rootPath.getName))
       assert(!df.queryExecution.executedPlan.treeString(verbose = true).contains(rootPath.getName))
