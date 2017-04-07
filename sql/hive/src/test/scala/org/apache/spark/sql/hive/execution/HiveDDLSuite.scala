@@ -1738,14 +1738,14 @@ class HiveDDLSuite
           if (specialChars != "a:b") {
             spark.sql("INSERT INTO TABLE t1 PARTITION(b=2) SELECT 1")
             val partFile = new File(f, "b=2")
-            assert(partFile.listFiles().nonEmpty)
+            assert(partFile.listFiles().length >= 1)
             checkAnswer(spark.table("t1"), Row("1", "2") :: Nil)
 
             spark.sql("INSERT INTO TABLE t1 PARTITION(b='2017-03-03 12:13%3A14') SELECT 1")
             val partFile1 = new File(f, "b=2017-03-03 12:13%3A14")
             assert(!partFile1.exists())
             val partFile2 = new File(f, "b=2017-03-03 12%3A13%253A14")
-            assert(partFile2.listFiles().nonEmpty)
+            assert(partFile2.listFiles().length >= 1)
             checkAnswer(spark.table("t1"),
               Row("1", "2") :: Row("1", "2017-03-03 12:13%3A14") :: Nil)
           } else {
