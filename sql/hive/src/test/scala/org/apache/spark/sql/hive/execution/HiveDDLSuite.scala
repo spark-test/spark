@@ -1744,8 +1744,8 @@ class HiveDDLSuite
             spark.sql("INSERT INTO TABLE t1 PARTITION(b='2017-03-03 12:13%3A14') SELECT 1")
             val partFile1 = new File(f, "b=2017-03-03 12:13%3A14")
             assert(!partFile1.exists())
-            loc.listFiles.foreach { f =>
-              println(f.getAbsolutePath)
+            f.listFiles.foreach { ff =>
+              println(ff.getAbsolutePath)
             }
             checkAnswer(spark.table("t1"),
               Row("1", "2") :: Row("1", "2017-03-03 12:13%3A14") :: Nil)
