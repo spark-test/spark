@@ -20,36 +20,14 @@ shallow_clone: true
 platform: x64
 configuration: Debug
 
-branches:
-  only:
-    - master
-
-only_commits:
-  files:
-    - R/
-    - sql/core/src/main/scala/org/apache/spark/sql/api/r/
-    - core/src/main/scala/org/apache/spark/api/r/
-    - mllib/src/main/scala/org/apache/spark/ml/r/
-
 cache:
   - C:\Users\appveyor\.m2
-
-install:
-  # Install maven and dependencies
-  - ps: .\dev\appveyor-install-dependencies.ps1
-  # Required package for R unit tests
-  - cmd: R -e "install.packages('testthat', repos='http://cran.us.r-project.org')"
-  - cmd: R -e "packageVersion('testthat')"
-  - cmd: R -e "install.packages('e1071', repos='http://cran.us.r-project.org')"
-  - cmd: R -e "packageVersion('e1071')"
-  - cmd: R -e "install.packages('survival', repos='http://cran.us.r-project.org')"
-  - cmd: R -e "packageVersion('survival')"
 
 build_script:
   - cmd: mvn -DskipTests -Psparkr -Phive -Phive-thriftserver package
 
 test_script:
-  - cmd: .\bin\spark-submit2.cmd --conf spark.hadoop.fs.defaultFS="file:///" R\pkg\tests\run-all.R
+  - cmd: .\python\run-tests --python-executables=python
 
 notifications:
   - provider: Email
