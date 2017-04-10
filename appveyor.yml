@@ -23,6 +23,10 @@ configuration: Debug
 cache:
   - C:\Users\appveyor\.m2
 
+install:
+  # Install maven and dependencies
+  - ps: .\dev\appveyor-install-dependencies.ps1
+
 build_script:
   - cmd: mvn -DskipTests -Psparkr -Phive -Phive-thriftserver package
 
