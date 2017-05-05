@@ -47,14 +47,6 @@ class SortShuffleSuite extends ShuffleSuite with BeforeAndAfterAll {
     conf.set("spark.local.dir", tempDir.getAbsolutePath)
   }
 
-  override def afterEach(): Unit = {
-    try {
-      Utils.deleteRecursively(tempDir)
-    } finally {
-      super.afterEach()
-    }
-  }
-
   test("SortShuffleManager properly cleans up files for shuffles that use the serialized path") {
     sc = new SparkContext("local", "test", conf)
     // Create a shuffled RDD and verify that it actually uses the new serialized map output path
