@@ -97,7 +97,7 @@ class PathOptionSuite extends DataSourceTest with SharedSQLContext {
           """.stripMargin)
         assert(
           spark.table("src").schema.head.metadata.getString("path") ==
-          p.getAbsolutePath)
+          p.toURI.toString)
       }
     }
 
