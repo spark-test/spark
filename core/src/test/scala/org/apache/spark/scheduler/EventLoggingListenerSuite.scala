@@ -51,7 +51,7 @@ class EventLoggingListenerSuite extends SparkFunSuite with LocalSparkContext wit
   private var testDirPath: Path = _
 
   before {
-    testDir = Utils.createTempDir(namePrefix = s"history log")
+    testDir = Utils.createTempDir(namePrefix = "history log")
     testDir.deleteOnExit()
     testDirPath = new Path(testDir.getAbsolutePath())
   }
@@ -292,11 +292,6 @@ object EventLoggingListenerSuite {
     val conf = new SparkConf
     conf.set("spark.eventLog.enabled", "true")
     conf.set("spark.eventLog.testing", "true")
-    val logDirStr = if (Utils.isWindows) {
-      "/" + logDir.toString
-    } else {
-      logDir.toString
-    }
     conf.set("spark.eventLog.dir", logDir.toString)
     compressionCodec.foreach { codec =>
       conf.set("spark.eventLog.compress", "true")

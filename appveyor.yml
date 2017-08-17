@@ -29,8 +29,6 @@ environment:
       profiles: "-Phive"
     - goal: "\"test-only org.apache.spark.deploy.SparkSubmitSuite\""
       profiles: "-Phive"
-    - goal: "\"test-only org.apache.spark.deploy.history.FsHistoryProviderSuite\""
-      profiles: "-Phive"
     - goal: "\"test-only org.apache.spark.scheduler.ReplayListenerSuite\""
       profiles: "-Phive"
     - goal: "\"test-only org.apache.spark.sql.hive.StatisticsSuite\""
