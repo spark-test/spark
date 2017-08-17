@@ -25,13 +25,7 @@ environment:
   NOLINT_ON_COMPILE: 0
 
   matrix:
-    - goal: "\"test-only org.apache.spark.deploy.RPackageUtilsSuite\""
-      profiles: "-Phive"
     - goal: "\"test-only org.apache.spark.deploy.SparkSubmitSuite\""
-      profiles: "-Phive"
-    - goal: "\"test-only org.apache.spark.scheduler.ReplayListenerSuite\""
-      profiles: "-Phive"
-    - goal: "\"test-only org.apache.spark.sql.hive.StatisticsSuite\""
       profiles: "-Phive"
 cache:
   - C:\Users\appveyor\.m2

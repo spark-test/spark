@@ -518,6 +518,7 @@ class SparkContext(config: SparkConf) extends Logging {
 
     _eventLogger =
       if (isEventLogEnabled) {
+        println("+++++++++++++++ " + _eventLogDir.get)
         val logger =
           new EventLoggingListener(_applicationId, _applicationAttemptId, _eventLogDir.get,
             _conf, _hadoopConfiguration)

@@ -432,6 +432,7 @@ class SparkSubmitSuite
         "--conf", "spark.hadoop.fs.defaultFS=unsupported://example.com",
         unusedJar.toString)
       runSparkSubmit(args)
+      println("------------------ " + testDirPath)
       val listStatus = fileSystem.listStatus(testDirPath)
       val logData = EventLoggingListener.openEventLog(listStatus.last.getPath, fileSystem)
       Source.fromInputStream(logData).getLines().foreach { line =>
