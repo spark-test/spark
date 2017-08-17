@@ -292,6 +292,11 @@ object EventLoggingListenerSuite {
     val conf = new SparkConf
     conf.set("spark.eventLog.enabled", "true")
     conf.set("spark.eventLog.testing", "true")
+    val logDirStr = if (Utils.isWindows) {
+      "/" + logDir.toString
+    } else {
+      logDir.toString
+    }
     conf.set("spark.eventLog.dir", logDir.toString)
     compressionCodec.foreach { codec =>
       conf.set("spark.eventLog.compress", "true")
