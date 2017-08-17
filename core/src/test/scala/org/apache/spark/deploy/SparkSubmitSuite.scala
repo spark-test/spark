@@ -830,7 +830,7 @@ class SparkSubmitSuite
     hadoopConf.set("fs.s3a.impl", "org.apache.spark.deploy.TestFileSystem")
     // Disable file system impl cache to make sure the test file system is picked up.
     hadoopConf.set("fs.s3a.impl.disable.cache", "true")
-    val sourcePath = s"s3a://${jarFile.getAbsolutePath}"
+    val sourcePath = s"s3a://${jarFile.toURI.getPath}"
     val outputPath =
       SparkSubmit.downloadFile(sourcePath, tmpDir, mutable.Map.empty, hadoopConf)
     checkDownloadedFile(sourcePath, outputPath)
@@ -848,7 +848,7 @@ class SparkSubmitSuite
     hadoopConf.set("fs.s3a.impl", "org.apache.spark.deploy.TestFileSystem")
     // Disable file system impl cache to make sure the test file system is picked up.
     hadoopConf.set("fs.s3a.impl.disable.cache", "true")
-    val sourcePaths = Seq("/local/file", s"s3a://${jarFile.getAbsolutePath}")
+    val sourcePaths = Seq("/local/file", s"s3a://${jarFile.toURI.getPath}")
     val outputPaths = SparkSubmit.downloadFileList(
       sourcePaths.mkString(","), tmpDir, mutable.Map.empty, hadoopConf).split(",")
 
