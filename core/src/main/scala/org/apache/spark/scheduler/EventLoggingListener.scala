@@ -88,7 +88,10 @@ private[spark] class EventLoggingListener(
   private[scheduler] val loggedEvents = new ArrayBuffer[JValue]
 
   // Visible for tests only.
-  private[scheduler] val logPath = getLogPath(logBaseDir, appId, appAttemptId, compressionCodecName)
+  private[scheduler] val logPath = {
+    val aa = getLogPath(logBaseDir, appId, appAttemptId, compressionCodecName)
+    println("*****" + logPath)
+  }
 
   /**
    * Creates the log file in the configured log directory.

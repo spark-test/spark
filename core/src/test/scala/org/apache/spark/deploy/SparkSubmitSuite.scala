@@ -878,6 +878,10 @@ class SparkSubmitSuite
       if (exitCode != 0) {
         fail(s"Process returned with exit code $exitCode. See the log4j logs for more detail.")
       }
+      val src = scala.io.Source.fromInputStream(process.getInputStream)
+      for (line <- src.getLines()) {
+        println(line)
+      }
     } finally {
       // Ensure we still kill the process in case it timed out
       process.destroy()
