@@ -90,7 +90,8 @@ private[spark] class EventLoggingListener(
   // Visible for tests only.
   private[scheduler] val logPath = {
     val aa = getLogPath(logBaseDir, appId, appAttemptId, compressionCodecName)
-    println("*****" + logPath)
+    println("*****" + aa)
+    aa
   }
 
   /**
