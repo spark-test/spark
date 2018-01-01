@@ -20,21 +20,6 @@ shallow_clone: true
 platform: x64
 configuration: Debug
 
-branches:
-  only:
-    - master
-
-only_commits:
-  files:
-    - appveyor.yml
-    - dev/appveyor-install-dependencies.ps1
-    - R/
-    - sql/core/src/main/scala/org/apache/spark/sql/api/r/
-    - core/src/main/scala/org/apache/spark/api/r/
-    - mllib/src/main/scala/org/apache/spark/ml/r/
-    - core/src/test/scala/org/apache/spark/deploy/SparkSubmitSuite.scala
-    - bin/*.cmd
-
 cache:
   - C:\Users\appveyor\.m2
 
@@ -61,3 +46,4 @@ notifications:
     on_build_success: false
     on_build_failure: false
     on_build_status_changed: false
+
